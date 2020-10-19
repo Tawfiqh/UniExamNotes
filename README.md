@@ -32,7 +32,7 @@ The only interesting CSS part is
 background-blend-mode: hard-light;
 ```
 
-Played around with a bunch of different (blend-modes)[https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode] but is generally an easy way to get good-contrast or interesting effects on pictures. 
+Played around with a bunch of different [blend-modes](https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode) but is generally an easy way to get good-contrast or interesting effects on pictures. 
 
 
 
