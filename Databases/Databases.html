@@ -1,0 +1,176 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<meta charset = UTF-8> 
+<link rel="stylesheet" type="text/css" href="../REDTIME.css"> 
+<link rel="shortcut icon" href="../favicon.ico"> 
+<title> Databases </title> 
+</head><body><div id="divback"></div><div id="main"><h3><a href="../index.html"> &larr; Home </a></h3>
+<h1>Databases</h1>
+
+<hr />
+
+<h2>Contents</h2>
+
+<ul>
+<li><a href="#DB">Overview</a></li>
+<li><a href="#safe">Safety equivalences</a></li>
+<li><a href="#RA">Relation Algebra</a></li>
+<li><a href="#SQL">SQL</a></li>
+<li><a href="#hardware">Storage and Hardware</a></li>
+<li><a href="#BTree">B+ Trees</a></li>
+<li><a href="#JoinI">Join implementations</a></li>
+<li><a href="#xacts">Transactions</a></li>
+</ul>
+
+<p><a id="DB"></a></p>
+
+<hr />
+
+<h2>Databases - DBMS</h2>
+
+<p>DBMS - We use it for efficiency, handling large data,  integrity, access control, concurrent access, data independence.</p>
+
+<p>Conceptual and semantic - UML</p>
+
+<p>Logical Model - trees &amp; graphs</p>
+
+<p>Physical Model - indexing, clustering</p>
+
+<p>Deletion of a required item:  </p>
+
+<ol>
+<li>Delete dependent fields, cascade.</li>
+<li>Reject deletion.</li>
+<li>Change dependent field to default.</li>
+</ol>
+
+<p>A schema describes valid instances.</p>
+
+<p><a id="safe"></a></p>
+
+<hr />
+
+<h2>Safety equivalences</h2>
+
+<p>Extended ADOM, also allows constants. <br />
+ADOM RC– = ADOM RC with no constants
+ADOM RC is safe.  </p>
+
+<p>ADOM RC– = RA = All safe queries.</p>
+
+<p>ADOM RC = RA (without consts) = Safe RC without constants.</p>
+
+<p>SQL with subqueries = RA = ADOMRC = SafeDRC</p>
+
+<p>AdomRC ⊆ RA ⊆ DRC</p>
+
+<p><a id="RA"></a></p>
+
+<hr />
+
+<h2>Relation Algebra</h2>
+
+<p>Renaming:</p>
+
+<p><em>P(R(col-->col2, col3-->col3'), expr);</em> <br />
+Calculate expr, rename the result to R, and rename columns as specified.</p>
+
+<p><a id="SQL"></a></p>
+
+<hr />
+
+<h2>SQL</h2>
+
+<p>Create table table_name(</p>
+
+<p>)</p>
+
+<p>Foreign key target is a primary key or unique.</p>
+
+<p><a id="hardware"></a></p>
+
+<hr />
+
+<h2>Storage and hardware</h2>
+
+<p>Data is on pages in disk. <br />
+We retrieve pages.</p>
+
+<p>Catalogs</p>
+
+<h3>Estimated Result sizes</h3>
+
+<p><strong>col = value</strong>  Rf = 1 / NVals(col)</p>
+
+<p><strong>col = col2</strong>  Rf = 1 / Max(NVals(col), NVals(col2))</p>
+
+<p><strong>col > value</strong>  Rf = High(I) - value / High(I) - Low(I)</p>
+
+<p><a id="BTree"></a></p>
+
+<hr />
+
+<h2>B+ Trees</h2>
+
+<h3>Insert</h3>
+
+<p>Insert and push up if too full.</p>
+
+<h3>Delete</h3>
+
+<p>Delete and steal from siblings if need be. <br />
+If they don't have spare capacity; merge.</p>
+
+<p><a id="JoinI"></a></p>
+
+<hr />
+
+<h2>Join implementations</h2>
+
+<p>Simple Nested Loop Join.</p>
+
+<p>Page Oriented Nested Loop Join.</p>
+
+<p>Block Nested Loop Join.</p>
+
+<p>Index Nested Loop Join.</p>
+
+<p>Sort-Merge Join.</p>
+
+<p>Hash Join.</p>
+
+<p><a id="xacts"></a></p>
+
+<hr />
+
+<h2>Transactions</h2>
+
+<p>Serial schedule : No interleaving of transactions.</p>
+
+<p>Serialisable: equivalent to a serial schedule.</p>
+
+<p>Equivalence: On the same input, give the same output database for a set of xacts.
+then two schedules are equivalent.</p>
+
+<h3>Conflict serialisable</h3>
+
+<p>A <strong>conflict</strong> is a read/write sequence (where at least one action is a write), by
+different transactions on the same object.</p>
+
+<p>Schedules are conflict equivalent if they deal with the same actions, and
+conflicts appear in the same order.</p>
+
+<p>Conflict serialisable if conflict equivalent to a serialisable schedule.</p>
+
+<h3>Strict 2PL</h3>
+
+<p>Shared Lock - Needed to read. <br />
+Exclusive Lock - Needed to write.</p>
+
+<p>Deadlock prevention</p>
+
+<p>Conflict graph - wait for graph.
+Transactions are nodes.
+Precedence/waiting is an edge.</p>
+</div></body></html>

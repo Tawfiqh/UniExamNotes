@@ -1,0 +1,932 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<meta charset = UTF-8> 
+<link rel="stylesheet" type="text/css" href="../REDTIME.css"> 
+<link rel="shortcut icon" href="../favicon.ico"> 
+<title> Security </title> 
+</head><body><div id="divback"></div><div id="main"><h3><a href="../index.html"> &larr; Home </a></h3>
+<h1>Security - Private communication in a public world.</h1>
+
+<hr />
+
+<h2>Contents</h2>
+
+<ul>
+<li><a href="#ProSpecs">Protocols and Specifications</a></li>
+<li><a href="#Definitions">Simple Definitions</a></li>
+<li><a href="#models">Access Models</a></li>
+<li><a href="#RM">References Monitors</a></li>
+<li><a href="#symCryp">Symmetric Key Crypto</a></li>
+<li><a href="#Shannon">Perfect Security</a></li>
+<li><a href="#Feistelnets">Feistel networks</a></li>
+<li><a href="#Des">DES</a></li>
+<li><a href="#DoubleEncr">Double encryption</a></li>
+<li><a href="#BlockHead">Block Ciphers</a></li>
+<li><a href="#Streams">Stream Ciphers</a></li>
+<li><a href="#420">Hashing</a></li>
+<li><a href="#Salt">Salting and Hash Stretching</a></li>
+<li><a href="#KDF">Key Derivation Functions</a></li>
+<li><a href="#NumThe">Number theory</a></li>
+<li><a href="#DatOne">RSA</a></li>
+<li><a href="#dhke">Diffie Hellman Key Exchange Protocol</a></li>
+<li><a href="#mac">MACs and Digital Signatures</a></li>
+<li><a href="#RSADIG">RSA as a Digital Signature</a></li>
+<li><a href="#mixers">Authentication and Encryption</a></li>
+<li><a href="#DolevYao">Dolev Yao Attacker</a></li>
+<li><a href="#uniprotos">Unilateral Authentication Protocols</a></li>
+<li><a href="#biprots">Bi-lateral Authentication Protocols</a></li>
+<li><a href="#keyzuz">Key Infrastructure</a></li>
+<li><a href="#beast">BEAST attack</a></li>
+<li><a href="#class">Class notes</a></li>
+</ul>
+
+<p><a id="ProSpecs"></a></p>
+
+<hr />
+
+<h2>Protocols and Specifications</h2>
+
+<h3>DES</h3>
+
+<p>64 bit plaintext/ciphertext blocks. <br />
+16 rounds <br />
+56 bit key - 48bit round keys.</p>
+
+<h3>AES</h3>
+
+<p>128 bit keys and plaintexts.</p>
+
+<h3>TLS</h3>
+
+<ol>
+<li>C ===> S: Nonce_c, cipherSuites.  </li>
+<li>S ===> C: nonce_s, chosenCipher, CertChain  </li>
+<li>C ===> S: Epks(protocolVersion || nonce_p)  </li>
+<li>S ===> C: Ekec(m1-3 || sign(m1-3))  </li>
+<li>C ===> S: Ekes(m1-4 || sign(m1-4))  </li>
+<li>C ===> S: Ekec(m || sign(m || counter))</li>
+<li>S ===> C: Ekes(m || sign(m || counter))</li>
+</ol>
+
+<h3>RSA</h3>
+
+<p>B bit primes.</p>
+
+<h3>SHA-1</h3>
+
+<p>160 bits <br />
+Not entirely sure of its security. But we think that exhaustive
+attack is the best full attack atm.  </p>
+
+<h3>SHA-2</h3>
+
+<p>224 bits
+Variants: 256 or 512 bits.</p>
+
+<h3>Needham-Schroeder-Lowe - using Public Keys.</h3>
+
+<p>We set up a symmetric session using assymetric keys. Just a quick handshake using
+slow protocols to begin with, sets up a quicker symmetric session.  </p>
+
+<p>A ---> B: Alice, Ekb(nonceA) <br />
+B ---> A: Epka( Bob || nonceA || nonceB ) <br />
+A ---> B: Epkb( nonceB || ks ) <br />
+A ---> B: Eks(m1 || Alice || counter)</p>
+
+<h3>Certificate Chain</h3>
+
+<p>I send &lt; Server, PKs, Issuer1, expiry, SIGN<em>PKiss1 &lt; Server, PKs, Issuer1, expiry > > <br />
+Certificate = SIGN</em>PKiss1 &lt; Server, PKs, Issuer1, expiry >  </p>
+
+<hr />
+
+<h2>Moxie Marlinspike's talk</h2>
+
+<p>Man in the middle attack.  Intruder impersonates the server to the client. The intruder impersonates the client to the server.</p>
+
+<p>CA's for <strong>AUTHENTICITY</strong>.</p>
+
+<p>If i can sign a certificate. I am trusted. I can say, hey look
+this is Jim's public key, and it really is his. Then you can now use Jim's
+public key but really it's not Jim's, maybe it's mine. I can now MitM you.</p>
+
+<p>Currently 650 different organisations can sign certificates.</p>
+
+<p>VeriSign were running lawful interception for the govt. i.e they could
+MitM attack for money.</p>
+
+<p>Trust Agility:</p>
+
+<ul>
+<li>Trust is not permanent. It can be revoked.</li>
+<li>Individual users/browsers can choose who they trust.</li>
+</ul>
+
+<p>Atm we ask websites to send us their certificates. <br />
+What if we asked CA's for the certs. like a KDC, requires
+them to always be online.</p>
+
+<p>Perspectives, an early paper with a questionable implementation. <br />
+Convergence tries to improve on this.</p>
+
+<p>Notaries. <br />
+You ask them if they see the same certificate as you.  </p>
+
+<p>Notaries can be securely connected through to other notaries.  </p>
+
+<p><a id="Definitions"></a></p>
+
+<hr />
+
+<h2>Definitions - Starter for 10</h2>
+
+<p>Integrity - Changes to the message by unauthorized persons can be detected by
+the authorised persons.</p>
+
+<p>Authenticity of Origin - We can verify that the message comes from its purported sender.</p>
+
+<p>Non-repudiation - Can't deny taking an action once it is taken.</p>
+
+<p>Availability.</p>
+
+<p>Authenticated Channel:</p>
+
+<ol>
+<li>Every message is sent by the puported sender.</li>
+<li>Every message is received in order.</li>
+<li>Every message is received by the intended recipient.</li>
+</ol>
+
+<p><a id="models"></a></p>
+
+<hr />
+
+<h2>Access Models</h2>
+
+<p>Subjects, S, and objects, O. <br />
+Different modes of access/permissions, P,  are available to different subjects.</p>
+
+<p>A ⊆ S x O x P</p>
+
+<p>Access Control Matrix - Rows are subjects, columns are objects, entries are permissions</p>
+
+<p>Access Control List - List for each object - List of pairs &lt; s, p > ∈ S x P.</p>
+
+<p>Mandatory -  System wide policies with a single admin. <br />
+Discretionary - Each file has an owner who administers the permissions for it.</p>
+
+<h3>Bell La Padula</h3>
+
+<p>Three functions:</p>
+
+<ul>
+<li>fc - <strong>c</strong>urrent level of a subject.</li>
+<li>fo - Current level of an <strong>o</strong>bject.</li>
+<li>fs - maximal <strong>s</strong>ecurity level of an object.</li>
+</ul>
+
+<p><strong>Discretionary</strong> is one constraint, the ds-property:</p>
+
+<ul>
+<li>&lt; s,o,p > ∈ A &lt;===iff===> &lt; s,o,p > has been granted.  </li>
+</ul>
+
+<p>(ds = discrete security).</p>
+
+<p><strong>Mandatory</strong> is two conditions:  </p>
+
+<p>For s∈ S trying to read o∈ O:</p>
+
+<ul>
+<li><p>No Read Up - SS-Property <br />
+&lt; s, o , Read > and &lt; s, o, Write > ===> fo(o) &lt;= fs(s)</p></li>
+<li><p>No write down - * property <br />
+&lt; s, o , Write > and &lt; s, o, Append > ===> fc(s) &lt;= fo(o) <br />
+AND <br />
+∀ o' st &lt; s , o' Write > ,&lt; s , o' Read >  fo(o') &lt;= fo(o)  </p></li>
+</ul>
+
+<p><a id="RM"></a></p>
+
+<hr />
+
+<h2>References Monitors</h2>
+
+<p>Handles authorisation.</p>
+
+<p>Gate through which all access is made.</p>
+
+<p>Integrity of the reference monitor itself must be ensured. Make
+sure a program can't just overwrite the reference monitor.</p>
+
+<p>Modern processors have various "security levels", x86 has 4 levels,
+two of interest are:</p>
+
+<ol>
+<li>User mode = ring 3</li>
+<li>Kernel mode = ring 0 (God mode as TommyG calls it).</li>
+</ol>
+
+<p>Reference monitor is built into the processor in silicon. #hardware solutions.</p>
+
+<p>Time of Check To Time of Use. <br />
+Buffer Overuns to implement a privelege escalation.</p>
+
+<p>Unix Groups for discretionary access control.</p>
+
+<p><a id="symCryp"></a></p>
+
+<hr />
+
+<h2>Symmetric Key Crypto</h2>
+
+<p><strong>Same key</strong> for encryption and decryption.</p>
+
+<p>Kerchoff's principle - assume the enemy knows the system of encryption.</p>
+
+<p>Four types of attack (attacker trying to find key OR decrypt future ciphertexts into plaintexts): <br />
+COA; KPA; CPA; CCA.</p>
+
+<p>Cipher needs to <strong>be able to withstand <em>CPA</em></strong>.</p>
+
+<p>Cryptanalysis is analysis of the system with the aim of breaking confidentiality.</p>
+
+<p><a id="Shannon"></a></p>
+
+<hr />
+
+<h2>Shannon's Perfect Security</h2>
+
+<p>1.P[M=m|C=c]=P[M=m]. <br />
+2.Keys are picked uniformly at random and used only once.</p>
+
+<p>Vernam Cipher with Uniform Random keys = <strong>O</strong>ne <strong>T</strong>ime <strong>P</strong>ad.</p>
+
+<p>Confusion - Non-linearity in the system.
+Diffusion - Destroy non-uniformity of the plaintext.</p>
+
+<p><a id="Feistelnets"></a></p>
+
+<hr />
+
+<h2>Feistel networks.</h2>
+
+<p>Lots of rounds, a mangler F.  </p>
+
+<p>Input m=L0||R0 <br />
+Li+1 = Ri <br />
+Ri+1 = Li ⊕ F(Ki+1, Ri) <br />
+Output = Rn || Ln  </p>
+
+<p>Inverse of c = L0' || R0' <br />
+Li+1' = Ri' <br />
+Ri+1' = F(kn-i, Ri') ⊕ Li'</p>
+
+<p><a id="Des"></a></p>
+
+<hr />
+
+<h2>DES &amp; AES</h2>
+
+<h3>DES</h3>
+
+<p>56-bit key</p>
+
+<p>16 round Feistel Network. Need to know the details.</p>
+
+<p>F(k, r) = P(S( E(R) ⊕ K ))</p>
+
+<p>E: Expansion from 32 to 48 bits. <br />
+S: 8 S-Boxes - Each take 6-bit input and non-linear (many to one) map to 4-bit output.  (These are many to one) <br />
+P: Fixed permutation of the 32 bits.  </p>
+
+<h3>AES</h3>
+
+<p>128 bit keys. <br />
+128 bit plaintexts.</p>
+
+<p>4x4 matrix of bytes, 10 rounds of applying transformations to the matrix.</p>
+
+<p><a id="DoubleEncr"></a></p>
+
+<hr />
+
+<h2>Double encryption.</h2>
+
+<p>Can use 2 keys. <strong>Ek(Ek'(m))=c</strong> and <strong>m = Dk'(Dk(c))</strong>.</p>
+
+<h3>Meet in the middle attack - KPA</h3>
+
+<ol>
+<li><p>Obtain plaintext <strong>m</strong> with ciphertext <strong>c</strong>.</p></li>
+<li><p>Iterate over keyspace for each <strong>k ∈ K</strong> <br />
+Calculate <strong>Ek(m)</strong> store <strong>&lt; k, Ek(m) ></strong> in a list.</p></li>
+<li><p>Iterate over keyspace for each <strong>k2 ∈ K</strong> <br />
+Calculate <strong>x=Dk2(c)</strong>. If ∃<strong>k</strong>, <strong>&lt; k, x ></strong> in the list, then store <strong>&lt; k, k2 ></strong> as a candidate pair.</p></li>
+<li><p>Test all known candidate keys <strong>&lt; k, k2 ></strong> with another known
+plaintext, ciphertext pair <strong>m'</strong> and <strong>c'</strong>. and accept the candidate pair
+such that <strong>Ek(Ek2(m')) = c'</strong></p></li>
+</ol>
+
+<p>O(2^n+1) work, for keyspace of size n. So double encryption doubles the work of
+the exhaustion attack (although naively we may have expected it to square the work).</p>
+
+<h3>Triple Encryption</h3>
+
+<p>Ek(Dk2( Ek3(m) ))</p>
+
+<p>Generally doubles the security.</p>
+
+<p><a id="BlockHead"></a></p>
+
+<hr />
+
+<h2>Block Ciphers</h2>
+
+<h3>ECB</h3>
+
+<h3>CBC</h3>
+
+<p>c0 = IV <br />
+ci+1 = Ek(mi⊕ ci)</p>
+
+<h3>OFB - Output Feedback Mode</h3>
+
+<p>Pseudo-random stream <strong>r</strong>.</p>
+
+<p>r1 = IV <br />
+ri+1 = Ek(ri)</p>
+
+<p>c1= IV <br />
+ci+1 = mi ⊕  ri+1</p>
+
+<h3>CTR - Counter Mode.</h3>
+
+<p>rn = Ek(IV ⊕ n)</p>
+
+<p>c1 = IV <br />
+cn = mn-1 ⊕ rn</p>
+
+<h3>GCAM</h3>
+
+<p><a id="Streams"></a></p>
+
+<hr />
+
+<h2>Stream Ciphers</h2>
+
+<p>RC4.</p>
+
+<p>Uses a hidden state and permutations. <br />
+Widely used. <br />
+Quick to compute. <br />
+Discard first few bytes.  </p>
+
+<p><a id="420"></a></p>
+
+<hr />
+
+<h2>Hashing</h2>
+
+<p>Properties:</p>
+
+<ol>
+<li><p>Length - h:D ===> {0,1}^n</p>
+
+<ol>
+<li>D= {0,1}^n</li>
+<li>D= {0,1}^n+k</li>
+<li>D= {0,1}^*</li>
+</ol></li>
+<li><p>Easy to compute h(x) for all x.</p></li>
+<li><p>Pre image resistant - For almost all y ∈ Image(h) it is <strong>infeasible</strong>
+to find <strong>x</strong> st <strong>h(x) = y</strong>.</p></li>
+<li><p>Weak collision resistant - 2nd Pre image resistant - Given <strong>x∈Dom(h)</strong>
+it is computationally infeasible to find <strong>x=/=x'</strong> st <strong>h(x)=h(x')</strong>.</p></li>
+<li><p>Collision Resistant - Strong collision resistance - It is hard to find a pair
+<strong>x=/=x'</strong> st <strong>h(x)=h(x')</strong>.</p></li>
+</ol>
+
+<p>We can use the simple contrapositives of the above statements to prove things.</p>
+
+<h3>Cryptographic Hash Function</h3>
+
+<p><strong>1c</strong>; <strong>2</strong>; <strong>4</strong>; <strong>5</strong>.
+1c -Domain {1,0}*
+2 - Easy to compute <br />
+4 - 2nd preimage resistant <br />
+5 - Strong Collision resistance</p>
+
+<h3>Compression Function</h3>
+
+<p><strong>1B</strong>; <strong>2</strong>; <strong>3</strong>; <strong>4</strong>; <strong>5</strong>.
+1b- Domain {1,0}^n+k <br />
+2 - Easy to compute <br />
+3 - PreImage Resistantn
+4 - 2nd preimage resistant <br />
+5 - Strong Collision resistance</p>
+
+<h3>Using a compression function to make a hash funtion.</h3>
+
+<p>h<> = IV <br />
+h &lt; x1,...,xqn,...,xqn+k > = g(h &lt; x1,...,xqn >, &lt; xqn+1, ..., xqn+k > )</p>
+
+<h3>Birthday Paradox</h3>
+
+<p>Average time to find a collision of an n bit hash: <br />
+sqrt(pi * 0.5 * 2^n)= pi/2 * 2^(n/2) =  O(2^n/2) <br />
+pi/2 = 1.6  </p>
+
+<h3>Lamport's Scheme</h3>
+
+<p>Store h^n(pwd). <br />
+A --> S: x=h^n-1(password) <br />
+S checks h(x) and stores x as the new password in his database.  </p>
+
+<p>Requires them to store n and keep it in sync. Additionally have to change <br />
+password after n logins.</p>
+
+<h3>Integrity</h3>
+
+<p>Proper integrity requires a key</p>
+
+<p>A ---> B: Ek(h(m))|m <br />
+or <br />
+A ---> B: Ek( h(m)|m ) - Bad because integrity relies on confidentiality.</p>
+
+<p><strong>Weakness:</strong> h(x)=h(x') ==then==> h(x||y) = h(x'||y).</p>
+
+<h3>MD Compliant Padding</h3>
+
+<ol>
+<li>x is a prefix of pad(x)</li>
+<li>|x| = |y| ==then==> |pad(x)| = |pad(y)|</li>
+<li>|x| =/= |y| ==then==> the last blocks of pad(x) and pad(y) are unequal.</li>
+</ol>
+
+<p>MD4 and MD5 are both insecure btw. Easy to find collisions.</p>
+
+<p><strong>SHA1-160 bits</strong>. <br />
+<strong>SHA2-224 to 512 bits</strong>  </p>
+
+<p>SHA2 and SHA3 considered secure.</p>
+
+<p><a id="Salt"></a></p>
+
+<hr />
+
+<h2>Salting and Hash Stretching.</h2>
+
+<p>h(Salt||password) - Pads out the input makes hashes longer to compute.  </p>
+
+<p>h(g(User)||password) - Harder to attack a database as need to work
+out an additional hash for each user. However it takes the same work
+if just attacking a single user.</p>
+
+<p>h(randomSalt||Password) - Assuming a random salt of 8bits. Have to
+try the input with 2^8 different salts. So we increase the work by
+2^8 per hash. This is much more intense on an attacker who has to
+create separate rainbow tables for each salt.</p>
+
+<h3>Time space tradeoffs.</h3>
+
+<p>Less space required, slower to lookup stored hashes.  </p>
+
+<p>Can use a chain of hashes or rainbow tables. Rainbow tables use a
+chain or a family of hashes, so a different hash at each point
+in the chain. This is to reduce clashes of chains.</p>
+
+<p>Iterate a hash - Hash stretching.</p>
+
+<p>There are fewer than a million dictionary words.</p>
+
+<p><a id="KDF"></a></p>
+
+<hr />
+
+<h2>Key Derivation Functions</h2>
+
+<p>Should be VERY slow with the intention of thwarting attacks, such as dictionary attacks.</p>
+
+<p>Hash stretching to make it slow.</p>
+
+<p>Derive a key from a shared-secret. (Still need a secure way of sharing the secret before hand).</p>
+
+<p><a id="NumThe"></a></p>
+
+<hr />
+
+<h2>Number theory</h2>
+
+<p>Trapdoors - Easy to compute, hard to invert, <strong>unless</strong> one is in possession of specifi information.</p>
+
+<p>a^(p-1) = 0 iff (p divides a)
+    = 1 otherwise.
+    (mod p)</p>
+
+<p><strong>gcd ( m , n )</strong> = t = mx + ny (where Euclid's algorithm will give us: t, x, y.  </p>
+
+<p>m and n are coprime with m|x and n|x  ===then===> mn|x. <br />
+e.g: 3, 5 st 3|60 and 5|60 ======> 15|60.  </p>
+
+<p><a id="DatOne"></a></p>
+
+<hr />
+
+<h2>RSA</h2>
+
+<h3>Key generation</h3>
+
+<ol>
+<li>p and q b-bits; n = pq; Φ = (p-1)(q-1)</li>
+<li>e coprime to Φ.</li>
+<li>d st de = 1 mod Φ</li>
+</ol>
+
+<p>Secret key = &lt; n, d >
+Public key = &lt; n, e ></p>
+
+<p>Can find d through Euclids on gcd(e, Φ). <br />
+We would use e = 3 as it is fast for encryption.</p>
+
+<p>Prime generation is O(b^3)
+Euclids is O(b^3) according to the notes. <br />
+So overall key generation is O(b^3).  </p>
+
+<p>For fixed e (as we fix e = 3 generally): <br />
+Encryption (with fixed e) is O(b^2) <br />
+Decryption is O(b^3)  </p>
+
+<h3>Encryption</h3>
+
+<ol>
+<li>Pad m  </li>
+<li>Epk(m) = m^e (mod n) = c</li>
+</ol>
+
+<h3>Decryption</h3>
+
+<ol>
+<li>m'= Dsk(c) = c^d mod n</li>
+<li>m = remove padding from m'</li>
+</ol>
+
+<h3>Repeated Squaring</h3>
+
+<p>O(log y)  </p>
+
+<p>x^y = 1 for y=0 <br />
+x^y = (x^2)^k for y=2k <br />
+x^y = x*(x^2)^k for y=2k+1</p>
+
+<h3>RSA Problem</h3>
+
+<p>Given c=m^e (mod n) where we know c, e and n, can we find m?  </p>
+
+<p>Fundamental tenet of cryptography: "The problem is well
+studied by the academic community and so far no feasible
+solution has been found for large key sizes, therefore
+an attacker should also be unable to find a feasible attack.</p>
+
+<h3>RSA Assumption</h3>
+
+<p>Assume: The RSA problem is infeasible for large n.</p>
+
+<h3>Integer factorization</h3>
+
+<p>It is easy to break RSA encryption if the attacker can factor p and
+q, then easily find d.</p>
+
+<p>But we also assume that the integer factorisation problem is
+infeasible for large n.</p>
+
+<h3>Padding RSA</h3>
+
+<p>Problems we want to avoid:</p>
+
+<ul>
+<li>m = 0 or 1</li>
+<li>Messages &lt; eth root of n.</li>
+<li>Encrypting the same message under many keys.</li>
+<li>Small set of possible messages. Dictionary Attack.</li>
+<li>Homomorphic property - E(m)<em>E(m2) = E(m</em>m2).</li>
+</ul>
+
+<p>PKCS#1:</p>
+
+<p>00 02 PADDING 00 PAYLOAD</p>
+
+<p>B = floor( log(n-1) / 8) <br />
+PADDING is B-p-3 lots of randomly generated non-zero bits.</p>
+
+<p><a id="dhke"></a></p>
+
+<hr />
+
+<h2>Diffie Hellman</h2>
+
+<p>g is a shared secret.</p>
+
+<p>A sends: g^sa <br />
+B sends: g^sb <br />
+Both compute g^(sa*sb)  </p>
+
+<p>Use RSA to establish a secure channel; DHKE to have a secure session.
+Run DHKE under RSA. Needs to be run on a secure channel otherwise
+it's susceptible to a simple man in the middle attack.</p>
+
+<h3>Discrete log problem</h3>
+
+<p>t=m^x (mod n), given t m and n can we find x? <br />
+So we need to find the exponent, hence it's a log problem.</p>
+
+<p><a id="mac"></a></p>
+
+<hr />
+
+<h2>MACs and Digital Signatures</h2>
+
+<h3>MAC - Message Authentication Code</h3>
+
+<p>Basically keyed hashes where output is some possible digest.
+Keyspace is secret and so the keys need to be shared by some other means.  </p>
+
+<p>MAC: {0,1}^n x K ----> D (D a set of posible digests) <br />
+Ver: {0,1}^n x K x D -----> {True, False}
+Ver k'(m', Mack(m)) = True iff k'=k and m=m'  </p>
+
+<p>If the message is signed with a MAC, then we know who the originator
+was as it must be the person with the key.</p>
+
+<p>It is good practice to use different keys for authentication and
+encryption. This is authentication, obviously.</p>
+
+<p>HMAC has problems but: <br />
+HMACk(m) = h(k||h(k||m)) <br />
+or in full: <br />
+HMACk(m) = h((c1⊕ k)||h((c2⊕ k)||m)) <br />
+With c1= 01011100 and c2 = 00110110  </p>
+
+<h3>Perfectly Secure MAC:</h3>
+
+<p>For all k, given m and MAC(m) then <br />
+∀ m'=/= m P[MAC(m')=d∈ D] = 1 / |D|  </p>
+
+<h3>Digital Signatures</h3>
+
+<p>Public/private key pairs.</p>
+
+<p>K - Private keyspace <br />
+K'- Public  keyspace</p>
+
+<p>SIGN: K x {0,1}^* --------> S <br />
+VER:  K'x {0,1}^* x S ----> {True, False}</p>
+
+<p>VER k ( m, SIGNk'(m')) = True iff m==m' and &lt; k, k' > are a valid public-private key pair.</p>
+
+<p><strong>Anyone</strong> can verify, but only the sender can sign.</p>
+
+<h3>Attacks on Digital Signatures</h3>
+
+<p>KOA - Key Only Attack - The attacker only knows the public key. <br />
+KMA - Known Message Attack - The attacker knows the public key and has some messages and their <strong>SIGN</strong>s. <br />
+CMA - Chosen Message Attack- The attacker knows the public key and can choose some messages to sign.  </p>
+
+<p>EF - Existential forgery <br />
+UF - Universal forgery</p>
+
+<p><em>Gold standard is security against EF even under CMA</em></p>
+
+<p><a id="RSADIG"></a></p>
+
+<hr />
+
+<h2>RSA as a Digital Signature</h2>
+
+<h3>Basic Idea</h3>
+
+<p>Public-Private Key Pair - &lt; Ks, Kp >
+Ks = &lt; d, n > <br />
+Kp = &lt; e, n > <br />
+SIGN(Ks, m) = m^d (mod n) <br />
+VER(Kp, m, sign)= (sign^e (mod n) == m )  </p>
+
+<h3>EF - KOA</h3>
+
+<p>We know e and n. <br />
+For any x we can sign m=x^e.  </p>
+
+<p><strong>m</strong>=x^e ===> sign(m=x^e) = x^ed = <strong>x</strong>
+Ver(m, sign) checks m==sign^e=m  </p>
+
+<p><strong>m</strong> = <strong>x^e</strong>; <strong>Sign(ks,m)</strong> = <strong>x</strong>  </p>
+
+<h3>EF - KMA</h3>
+
+<p>Sign(m) = o; Sign(m') = o' <br />
+Sign(mm') = oo'</p>
+
+<p>So given two messages <strong>m</strong> and <strong>m'</strong> with their signatures. We can also sign <strong>mm'</strong></p>
+
+<h3>UF - CMA</h3>
+
+<p>m1 = m*r <br />
+Sign(m1)  </p>
+
+<p>m2 = r^-1 <br />
+Sign(m2)</p>
+
+<p>m1m2 = m <br />
+Sign(m) = Sign(m1m2) = Sign(m1)*Sign(m2)  </p>
+
+<h3>Solutions:</h3>
+
+<ol>
+<li><p><strong>Name in "ticket":</strong> Sign(Name||m)</p></li>
+<li><p><strong>Simple hashing:</strong> Sign(h(m))</p></li>
+<li><p><strong>Hashing and padding PKCS-esque:</strong> Sign(00 01 PADDING 00 h(m))</p></li>
+<li><p><strong>RSA PSS - double padding:</strong></p>
+
+<ol>
+<li><em>Double Hash with Salt:</em> H= h(0x00 ^8 || h(message) || SALT)</li>
+<li><em>Padding, salt, concat with another hash (side of extra hash):</em> S = (PADDING || 0x01 || SALT)⊕ MGF(H) || H || 0xBC
+{MGF is another hash}</li>
+</ol></li>
+</ol>
+
+<p><a id="mixers"></a></p>
+
+<hr />
+
+<h2>Authentication and Encryption</h2>
+
+<h3>ATE</h3>
+
+<p>c = Ek(m||Sign(m))</p>
+
+<h3>ETA - <em>Theoretical Guarantees</em></h3>
+
+<p>Ek(m) || Sign(Ek(m))</p>
+
+<h3>E&amp;A</h3>
+
+<p>Ek(m) || Sign(m) <br />
+Separation of concerns.</p>
+
+<p><a id="DolevYao"></a></p>
+
+<hr />
+
+<h2>Dolev Yao Attacker</h2>
+
+<p>We assume the following strengths of the attacker on the Dolve Yao attack model:</p>
+
+<ul>
+<li>Can eavesdrop on all messages that pass through the network.</li>
+<li>Can intercept and message by masquerading as the recipient.</li>
+<li>Can send any message by impersonating the sender.</li>
+<li>Is also a legitimate user of the network.</li>
+</ul>
+
+<p><a id="uniprotos"></a></p>
+
+<hr />
+
+<h2>Unilateral Protocols</h2>
+
+<h3>Symmetric Key</h3>
+
+<ol>
+<li>A ----> B: Alice</li>
+<li>B ----> A: Ek(nonceA)  //Challenge - The challenge for A is to decrypt and confirm this.</li>
+<li>A ----> B: Ek(nonceA + 1)  //Response - Responds by incrementing it, means she must have decrypted it.</li>
+</ol>
+
+<p><em>(Authenticates Alice)</em></p>
+
+<p>We re-encrypt the response otherwise we have given up an oracle. <br />
+We encrypt the original message (as opposed to just asking Alice
+ to encrypt it) so that we don't open it up to a KPA. <br />
+Could also avoid KPA/oracle-ness by adding a structure (maybe a
+ certain prefix) to the nonce.</p>
+
+<p>We could use timestamps, but that requires an additional
+state from whoever is storing the timestamps. Additionally
+we need to then keep the clocks in sync and avoid too much
+<em>clock skew</em>.</p>
+
+<p>Block replay attacks with a counter in the messages. Ek(m||counter).  </p>
+
+<p>We use the nonce as a sort of session id: Ek( m || nonce || Alice || Counter ) <br />
+This is because we have established identity based on the nonce, so we continue
+to rely on it for continued authentication of identity.</p>
+
+<h3>Session Key establishment</h3>
+
+<ol>
+<li>A ----> B: Alice  </li>
+<li>B ----> A: Ek(nonceA)  </li>
+<li>A ----> B: Ek(nonceA + 1 || ks  )  </li>
+<li>A ----> B: Eks(m1 || Alice || Counter)</li>
+</ol>
+
+<p><em>(Authenticates Alice)</em> Let's say Alice was a news site? That makes
+sense from line 2 onwards. The site proves their identity and then sends
+the information.</p>
+
+<h3>Public Key</h3>
+
+<p>A ---> B: Alice
+B ---> A: EpkA(Bob || nonce) <br />
+A ---> B: nonce.</p>
+
+<p>We prepend the name so that we don't give up an oracle against ourselves.</p>
+
+<h3>Public key - Session Key Establishment.</h3>
+
+<p>A ---> B: Alice <br />
+B ---> A: Epka(nonce) <br />
+A ---> B: nonce <br />
+B ---> A: Epka(nonce||ks) <br />
+A ---> B: Eks(m1||Alice||counter)</p>
+
+<h3>TLS</h3>
+
+<ol>
+<li>C ---> S: noncec ; Available Cipher Suite</li>
+<li>S ---> C: nonceS ; Selected  Cipher Suite; Certificate = &lt; S, pks, Issuer1, ExpiryDate, Sign<em>pkis1</em>(S, pkS, expiry) >,
+      &lt; Issuer1, pkIss1, Issuer2, Expiry, Signpkis2(Issuer1, pkIss1, Expiry)  >  </li>
+<li>C ---> S: Epks(Protocol || noncep)</li>
+<li>C ---> S: Ekec(steps1-3 || MACkmc(steps1-3) )</li>
+<li>S ---> C: Ekec(steps1-4 || MACkms(steps1-4) )</li>
+<li>C ---> S: Ekec(m1 || MACkmc(m1||counter))</li>
+<li>C ---> S: Ekes(m2 || MACkms(m2||counter))</li>
+</ol>
+
+<p><a id="biprots"></a></p>
+
+<hr />
+
+<h2>Bilateral Authentication Protocols</h2>
+
+<h3>Needham-Schroeder-Lowe - using Public Keys.</h3>
+
+<p>A ---> B: Alice, Ekb(nonceA) <br />
+B ---> A: Epka( Bob || nonceA || nonceB ) <br />
+A ---> B: Epkb( nonceB || ks ) <br />
+A ---> B: Eks(m1 || Alice || counter)</p>
+
+<h3>TLS</h3>
+
+<ol>
+<li>C ---> S: noncec ; Available Cipher Suite</li>
+<li>S ---> C: nonceS ; Selected  Cipher Suite; Certificate = &lt; S, pks, Issuer1, ExpiryDate, Sign<em>pkis1</em>(S, pkS, expiry) >,
+      &lt; Issuer1, pkIss1, Issuer2, Expiry, Signpkis2(Issuer1, pkIss1, Expiry)  >  ...</li>
+<li>C ---> S: &lt; C's certificate chain. ></li>
+<li>C ---> S: Epks(Protocol || noncep)</li>
+<li>C ---> S: Ekec(steps1-3 || MACkmc(steps1-3) )</li>
+<li>S ---> C: Ekec(steps1-4 || MACkms(steps1-4) )</li>
+<li>C ---> S: Ekec(m1 || MACkmc(m1||counter))</li>
+<li>C ---> S: Ekec(m1 || MACkmc(m1||counter))</li>
+</ol>
+
+<p><a id="keyzuz"></a></p>
+
+<hr />
+
+<h2>Key Infrastructure</h2>
+
+<p>Trusted Third Parties - TTP.</p>
+
+<h3>KDC - Key Distribution Centre.</h3>
+
+<p>Connects people - they authentice through the KDC. <br />
+Shared keys with all users.</p>
+
+<h3>Certificate Authority</h3>
+
+<p>Signs Certificates.</p>
+
+<p>Needham Schroeder with KDC.</p>
+
+<h3>Perfect Forward Secrecy</h3>
+
+<p>Future sessions are secure even if long-term keys are compromised. Can
+ensure this by using DHKE to set up a symmetric session key over RSA or
+some other form of public assymetric crypto. Then even if the assymetric
+crypto is compromised, the individual session is still uncompromised.</p>
+
+<p>Determine the <em>session</em> key separately to the long-term key.</p>
+
+<p><a id="beast"></a></p>
+
+<hr />
+
+<h2>BEAST attack</h2>
+
+<p>Push a prefix. <br />
+XOR out the IV and guess the last message byte. <br />
+Rinse and repeat for the next byte.
+For the next block we XOR out both the IV and c1...c8.  </p>
+</div></body></html>

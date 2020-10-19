@@ -1,0 +1,124 @@
+body {
+    background-color: #000000;
+    /*background-image: url(back1.jpg);*/
+    background-size: cover;
+
+    /*background-blend-mode: luminosity;*/
+
+    color: white;
+    font-family: "Gill Sans";
+    background-position:center;
+    background-attachment: fixed;
+    margin: 0px 0px 44px 0px;
+
+}
+
+
+
+#divback{
+    background-color: #00A5FF;
+    background-blend-mode: luminosity;
+
+    background-image: url(back1.jpg);
+    background-size: cover;
+    background-position:center;
+    /*background-attachment: fixed;*/
+    background-repeat: no-repeat;
+
+    position:fixed;
+    /*overflow:hidden;*/
+
+    width:100%;
+    height: 100%;
+
+}
+
+#blur{
+    z-index: 1;
+
+    background-color: #00bbff;
+    background-blend-mode: luminosity;
+    background-image: url(back1.jpg);
+    background-size: cover;
+    background-position:center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+
+
+    -webkit-filter: blur(10px);
+    -moz-filter: blur(15px);
+    -o-filter: blur(15px);
+    -ms-filter: blur(15px);
+
+    position:fixed;
+    overflow:hidden;
+
+    /*width:calc(65% + 40px);*/
+
+    width:60%;
+    height: 88%;
+
+    margin-left: 15%;
+    margin-right: auto;
+
+    padding: 10px 5% 50px 5%;
+
+    border-radius: 40px 40px 40px 40px;
+    border-style: hidden;
+    border-width: 10px;
+
+}
+
+
+
+
+#main{
+  background: rgb(#00007c);
+  background: rgba(0, 0, 49, 0.75);
+
+  position:relative;
+  overflow: hidden;
+
+  width:60%;
+
+  /*margin-top: 20px;*/
+  margin-top: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px 5% 50px 5%;
+
+
+  border-radius: 40px 40px 40px 40px;
+  border-style: double;
+  border-color: white;
+  border-width: 10px;
+
+
+}
+
+img{
+  width:100%;
+}
+
+h1 {
+    text-decoration: underline;
+}
+
+h2 {
+    text-decoration: underline;
+    padding-top: 5px;
+    padding-bottom: 20px;
+}
+
+/* unvisited link */
+a:link {
+    color: white;
+}
+
+a:visited {
+    color: white;
+}
+
+a:hover {
+    color:#45bef2;
+}

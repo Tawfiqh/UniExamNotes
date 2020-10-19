@@ -1,0 +1,388 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<meta charset = UTF-8> 
+<link rel="stylesheet" type="text/css" href="../REDTIME.css"> 
+<link rel="shortcut icon" href="../favicon.ico"> 
+<title> Lambda </title> 
+</head><body><div id="divback"></div><div id="main"><h3><a href="../index.html"> &larr; Home </a></h3>
+<h1>Lambda Calculus</h1>
+
+<hr />
+
+<h2>Contents</h2>
+
+<ul>
+<li><a href="#rulesOLambdaBeta">Rules of λβ</a></li>
+<li><a href="#βequality">Equality of →β</a></li>
+<li><a href="#head">Head Reduction and <em>OTHER</em> reductions! 😮</a></li>
+<li><a href="#consistency">Consistency</a></li>
+<li><a href="#genericity">Genericity Lemma</a></li>
+<li><a href="#combinators">Combinators</a></li>
+<li><a href="#Ycombinator">Y Combinator</a></li>
+<li><a href="#ChurchNumerals">Church Numerals</a></li>
+<li><a href="#ScottCurry">Scott's Curry Theorem 🍛🍛🍛</a></li>
+<li><a href="#functions">Functions - Recursive or otherwise</a></li>
+<li><a href="#CLs">Combinatory Logic</a></li>
+<li><a href="#CAs">Combinatory Algebras</a></li>
+<li><a href="#types">Types</a></li>
+<li><a href="#typability">Typability</a></li>
+<li><a href="#Robinsons">Robinson's Unification Algorithm</a></li>
+<li><a href="#TypeAlgorithm">Principal type algorithm</a></li>
+<li><a href="#undecidability">Undecidability Results</a></li>
+</ul>
+
+<p><a id="rulesOLambdaBeta"></a></p>
+
+<hr />
+
+<h2>Rules of λβ</h2>
+
+<p>s=t <br />
+----- Symmetry <br />
+t=s</p>
+
+<p>s = t     t = u <br />
+---------- Transitivity
+s = u</p>
+
+<p>etc, etc...</p>
+
+<p>So λβ|- s=t  is not defined as =β but they are provably equivalent.  </p>
+
+<p>λβ|- s=t is defined as: <br />
+Symmetry, transitivity, reflexivity <br />
+Application, abstraction, β-reduction.  </p>
+
+<p>and</p>
+
+<p>=β is the reflexive, symmetric, transitive closure of →β</p>
+
+<p>Exercise: show =β implements λβ  </p>
+
+<p>First recursion theorem: <br />
+∀f∈Λ ∃u∈Λ st fu = u</p>
+
+<p>Second recursion theorem: <br />
+∀f ∃u st f[[u]]=u</p>
+
+<p><a id="βequality"></a></p>
+
+<hr />
+
+<h2>β Equality, reflexive transitive closure of →β</h2>
+
+<p>Diagram of the two way equality.</p>
+
+<p><img src="sequalst.jpg" alt="s =β t" title="" /></p>
+
+<p>Just prove it using the diagram and make use of Church-Rosser.</p>
+
+<p>The precise thing would be:
+At each level we reduce to one less term.
+So after n-1 levels we have only 1 term.</p>
+
+<p><a id="head"></a></p>
+
+<hr />
+
+<h2>Head Reduction</h2>
+
+<p>This is HNF: <br />
+s ≡ λx1...xn . y s1...sm</p>
+
+<h3>Head Reduction:</h3>
+
+<p>λx0...xn . (λy.u)t s0•...•sm →h λx0...xn . u[t/y]•s0•...•sm</p>
+
+<p>An application can</p>
+
+<p>A headmost reduction is always a <strong>LEFTMOST reduction</strong>. And it's <em>bloody</em>
+obvious what a leftmost reduction is.</p>
+
+<p>Solvable <em>IFF</em> HNF</p>
+
+<h3>Internal reduction</h3>
+
+<p>A β reduction that isn't a head reduction.</p>
+
+<h3>Other Reductions.</h3>
+
+<p>Leftmost - Not even going to define this. DBI. <br />
+Standard - Once something is reduced, nothing to the left of that is reduced. <br />
+(Standard is a property of a whole reduction).  </p>
+
+<p>A standard deduction has to precede from the left, but not necessarily left<strong>most</strong>!</p>
+
+<p>Head and leftmost reductions are standard. #standard.</p>
+
+<h3>Some results</h3>
+
+<ol>
+<li>Every standard reduction sequence ending in a normal form is leftmost.</li>
+<li>If s has a β normal form. Then standard reduction is sufficient (specifically <strong>leftmost</strong> is sufficient) to obtain it.</li>
+</ol>
+
+<p><a id="consistency"></a></p>
+
+<hr />
+
+<h2>Consistency</h2>
+
+<p>To show it isn't consistent show that it equates all terms.</p>
+
+<p>So for all s, t. They can be equated.</p>
+
+<p><a id="genericity"></a></p>
+
+<hr />
+
+<h2>Genericity Lemma</h2>
+
+<p>FOR ALL/ANY CONTEXTS C</p>
+
+<p>If s is unsolvable</p>
+
+<p>and <strong>C[s] = t</strong>  for some solvable t <br />
+then for all x: <strong>C[x] = t</strong></p>
+
+<p>So if a context can take an unsolvable term and return a solvable term.
+It must just ignore its input.</p>
+
+<p>Sometimes we use two contexts to show that one thing holds for <strong>C</strong>
+and then something holds for <strong>C'</strong> and for some input <strong>C</strong> = <strong>C'</strong>.</p>
+
+<p><a id="combinators"></a></p>
+
+<hr />
+
+<h2>Combinators</h2>
+
+<p><strong>ω</strong>=λx.xx <br />
+<strong>Ω</strong>=<strong>ωω</strong>  </p>
+
+<p><strong>t</strong>=λxy.x <br />
+<strong>f</strong>=λxy.y  </p>
+
+<p><strong>k infinity</strong>=<strong>YK</strong></p>
+
+<p><strong>k</strong>=λxy.x <br />
+<strong>s</strong>=λxyz.xz(yz)</p>
+
+<p><strong>i</strong> = Well this one is obvious...</p>
+
+<p><strong>θ</strong> = (λxy.y(xxy)) (λxy.y(xxy))  ≡ <strong>Y S i</strong> <br />
+<strong>Y</strong> = λf.(λx.f(xx))</p>
+
+<p><a id="Ycombinator"></a></p>
+
+<hr />
+
+<h2>The Y combinator</h2>
+
+<p>Yf = f(Yf)</p>
+
+<!-- Y = λf.(λx.f(xx))(λx.f(xx)) -->
+
+<p>Q:Find some term <strong>s</strong> st: s = λx.xss
+Abstract out s: λsx.xss and then apply the Y combinator.</p>
+
+<p>s ≡ Y(λsx.xss)</p>
+
+<p>then s ≡ Y(λsx.xss) = (λsx.xss)(Y(λsx.xss)) = λx.xss 😄</p>
+
+<p><a id="ChurchNumerals"></a></p>
+
+<hr />
+
+<h2>Church Numerals</h2>
+
+<p>[n] = λfx. fff...fffx    {naturally n lots of f's} <br />
+[0] = λfx.x    (=<strong>f</strong>) <br />
+[1] = λfx.fx  </p>
+
+<p>Lists - xxyz</p>
+
+<p>Godel Numbering - We basically have an enumeration of the terms.
+So for each integer we have an associated term.
+And for each term we have an associated integer.</p>
+
+<p><a id="ScottCurry"></a></p>
+
+<hr />
+
+<h2>Scott's Curry Theorem</h2>
+
+<h3>The Curry</h3>
+
+<p>Φ ⊊ A,B ⊊ Λ and A, B closed under β-Convertability:</p>
+
+<p>There does not exist a term f st for all terms x</p>
+
+<p>fx = <strong>t</strong> iff x in A
+fx = <strong>f</strong> iff x in B</p>
+
+<h3>The Lemma</h3>
+
+<p>For some set X. <br />
+Φ ⊊ X ⊊ Λ and X closed under β-Convertability ====> X is not recursive.  </p>
+
+<p><a id="functions"></a></p>
+
+<hr />
+
+<h2>Functions - Recursive or otherwise</h2>
+
+<p>Partial function &lt;====> Strongly λ-definable.</p>
+
+<p><a id="CLs"></a></p>
+
+<hr />
+
+<h2>Combinatory Logic</h2>
+
+<p>Made of four components:</p>
+
+<ul>
+<li>Variables: x ∈ V then x ∈ Tcl</li>
+<li><strong>K</strong></li>
+<li><strong>S</strong></li>
+<li>Composition: A,B ∈ Tcl then AB ∈ Tcl</li>
+</ul>
+
+<p>3 rules:</p>
+
+<ul>
+<li>Application A=A' B=B' then AB=A'B'</li>
+<li><strong>K</strong> A B = B</li>
+<li><strong>S</strong> A B C = A C (B C)</li>
+</ul>
+
+<p><strong>I</strong> = <strong>SKK</strong></p>
+
+<h3>Fake Lambda</h3>
+
+<ul>
+<li>λλx.x = <strong>SKK</strong>  </li>
+<li>λλx.A = <strong>K</strong> A  Where x not in A  </li>
+<li>λλx.BC = <strong>S</strong>(λλx.B)(λλx.C)  Where in B or C.  </li>
+</ul>
+
+<h2>Combinatory Algebras</h2>
+
+<p>Term Algebra is a quadruple - &lt; A, . , <strong>K</strong>, <strong>S</strong> ></p>
+
+<p>An environment (valuation) is just a map P: V ---> A
+Maps variables to terms of our algebra.</p>
+
+<h3>λ-Algebra</h3>
+
+<p>An algebra in which λβ |- t=u ===> ∀p [[t]]p = [[u]]p  </p>
+
+<p>(Not godel numbering, this is the actual syntax, it's for evaluation under a map).</p>
+
+<p><a id="types"></a></p>
+
+<hr />
+
+<h2>Types</h2>
+
+<p>-------------------------------- Variables <br />
+{x:A} |--> x:A  </p>
+
+<p>Γ ➡️ s: A▶️B, Γ' ➡️  t: A <br />
+-------------------------------- Application <br />
+Γ U Γ' ➡️ st:B</p>
+
+<p>Γ➡️s:B <br />
+-------------------------------- Abstraction {Γ consistent with {x:A} } <br />
+Γ ➡️ λx.s : A ▶️ B</p>
+
+<p>We say two types are consistent if they don't contradict on the type of any variable.</p>
+
+<p>Subject Construction Lemma: Construction tree and deduction trees are like the same but upside down lol. ↕️</p>
+
+<p>Deductions are unique when the term is in β-Normal form.</p>
+
+<p>Subject Reduction Theorem - S:A and S reduces to t then t:A <br />
+Γ |- s : A and s →β t  =======>  Γ |- t : A</p>
+
+<p>Typable terms are closed under:</p>
+
+<ol>
+<li>Subterms</li>
+<li>β-Reduction</li>
+<li>Abstraction</li>
+</ol>
+
+<p><a id="typability"></a></p>
+
+<hr />
+
+<h2>Typability</h2>
+
+<p>Typability → Strongly Normalising</p>
+
+<p>However λx.xx <em>is</em> strongly normalising, but <strong>NOT</strong> typable.</p>
+
+<p>Terms that are untypable:</p>
+
+<ul>
+<li>xx</li>
+<li>λx.xx   (=ω)</li>
+<li>Ω = (λx.xx) (λx.xx)</li>
+<li>Y = λf. (λx.f(xx)) (λx.f(xx))</li>
+</ul>
+
+<p>Principal Deduction - A deduction of <strong>s : A</strong> such that all other
+deductions of <strong>s : A</strong> are instances of this deduction.</p>
+
+<p>Principal type Algorithm <br />
+Returns either that the term is untypable, or it returns the principal type.</p>
+
+<p><a id="Robinsons"></a></p>
+
+<hr />
+
+<h2>Robinson's Unification Algorithm  </h2>
+
+<p>Determines whether two types are unifiable and if so it returns the most general unifier.</p>
+
+<pre><code>Input(A, B):
+    i=0
+    U0 = E  //The empty/identity unification.
+    while(true)
+        if (Ui(A) = Ui(B)) return U = Ui
+
+        else //Ui(A) and Ui(B) differ somewhere.
+            //Ui(A) = String1 c stringa
+            //Ui(B) = String1 D stringb
+
+            if(c in Vars(D)) return untypable
+            else Ui+i = [D/c] . Ui
+        i++
+</code></pre>
+
+<p><a id="TypeAlgorithm"></a></p>
+
+<hr />
+
+<h2>Principal type algorithm</h2>
+
+<p>Input s a term. Output S's principal type OR s is untypable.</p>
+
+<p><a id="undecidability"></a></p>
+
+<hr />
+
+<h2>Undecidability Results</h2>
+
+<ol>
+<li><p>Equality in λβ is undecidable.</p></li>
+<li><p>However equality of <strong>typable</strong> terms is decidable because they are strongly
+normalising.</p></li>
+<li><p>Undecidable if a term has a normal form. (Page 109/203 lecture slides.)</p></li>
+<li><p>Undecidable if a term is solvable.</p></li>
+<li><p>Undecidable if a term is equal to some numeral.</p></li>
+</ol>
+</div></body></html>

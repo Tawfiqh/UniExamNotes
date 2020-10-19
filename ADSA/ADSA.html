@@ -1,0 +1,824 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<meta charset = UTF-8> 
+<link rel="stylesheet" type="text/css" href="../REDTIME.css"> 
+<link rel="shortcut icon" href="../favicon.ico"> 
+<title> ADSA </title> 
+</head><body><div id="divback"></div><div id="main"><h3><a href="../index.html"> &larr; Home </a></h3>
+<h1>Advanced Data Structures &amp; Algorithms</h1>
+
+<hr />
+
+<h2>Contents</h2>
+
+<ul>
+<li><a href="#rishta">Matchings</a></li>
+<li><a href="#Flows">Flows 1</a></li>
+<li><a href="#LPs">Linear Programming</a></li>
+<li><a href="#approx">Approximation Algorithms</a></li>
+<li><a href="#amortizedAnalysis">Amortized Analysis</a></li>
+<li><a href="#DisjointSets">Disjoint Sets</a></li>
+<li><a href="#BSTs">Binary Search Trees</a></li>
+<li><a href="#RedBlackTrees">Red Black Trees</a></li>
+<li><a href="#SplayTrees">Splay Trees</a></li>
+<li><a href="#FFT">Fast fourier transforms</a></li>
+<li><a href="#RSA">Number Theoretic Algorithms</a></li>
+</ul>
+
+<p><a id="rishta"></a></p>
+
+<hr />
+
+<h2>Matchings</h2>
+
+<p>Gale Shapley Marriage algorithm. I think you know this one 😉  </p>
+
+<p>Valid Partner - A potential partner in <strong>some</strong> stable matching.</p>
+
+<p><a id="Flows"></a></p>
+
+<hr />
+
+<h2>Flows 1</h2>
+
+<p>Cut = Partition of vertices into A and B with s in A, t in B. <br />
+Capacity of a cut (A,B): Sum of capacities e from A <strong>to</strong> B.</p>
+
+<p>Value of a flow = Sum of flow on all edges leaving s.</p>
+
+<p>Residual graph: <br />
+Edge, e, in Gf is st: <br />
+    f'(e) = c(e) - f(e)  for e in E <br />
+    f'(e) = f(e)         for e not in E</p>
+
+<p>Augmenting Path - Simple path s-->t <strong>in</strong> the residual graph. <br />
+Bottleneck Capacity - Min capacity on an augmenting path.</p>
+
+<h3>Ford Fulkerson.</h3>
+
+<pre><code>Initialise flow to zero.  
+While(an existing path in Gf){  
+  Find augmenting path P.  
+  Increase flow along P by bottleneck capacity.  
+  Update residual graph.  
+Return f.
+</code></pre>
+
+<p>Running time: O(V+2E) = O(E) according to one source.</p>
+
+<h3>Flow &amp; Cut Theorems</h3>
+
+<p>Flow value lemma: Net flow across a cut (Net from A to B) equals value of the whole flow. (This includes back flow from B into A)</p>
+
+<p>Therefore: value(f) = Net flow out of A &lt;= Cap(A,B)</p>
+
+<p>Max-flow = Min-cut <br />
+(The problems are dual and their optimal solutions intersect).  </p>
+
+<h3>Capacity-Scaling</h3>
+
+<p>We define the X-Residual-graph as the residual graph but only with edge capacities larger than X.</p>
+
+<pre><code>X = largest power of 2 &lt;= Max Capacity
+While(X &gt;= 1)
+    Update X-Residual-graph.
+    While (Exists augPath P in X-Residual-graph)
+        Augment flow on P.
+        Update X-Residual-graph
+    X = X/2
+Return f
+</code></pre>
+
+<h3>Bipartite graphs</h3>
+
+<p>A matching X ⊆ E(G) is a set st each node of the graph appears in at most one edge of X. <br />
+We naturally want to find the maximal matching.</p>
+
+<p>Bipartite Max matching: network flow formulation, unary edges. Max flow. <br />
+O(mn)</p>
+
+<p><strong>Perfect</strong> matching is when each node appears in <strong>EXACTLY</strong> one edge of the matching.</p>
+
+<p>Hall's Theorem: G has a perfect matching <em>iff</em> Number of nodes adjacent to S = |S| for all subsets S of <strong>L</strong></p>
+
+<p><strong>K-regular bipartite graph</strong> - Has a perfect matching. <br />
+|R| = |L| = n <br />
+Each node is connected to <strong>k</strong> other nodes.  </p>
+
+<p>Max-Flow of value n:
+f(s,x) = 1 <br />
+f(x,t) = 1 <br />
+f(u,v) = 1/k  </p>
+
+<h3>Disjoint paths</h3>
+
+<p>Edge distjoint</p>
+
+<p>Max number of edge disjoint s->t paths = max flow.</p>
+
+<p><strong>Disconnects</strong> -  A set X is a disconnect if all s->t paths need to use an
+edge in X.</p>
+
+<p>Mengers theorem. zzzz</p>
+
+<p><strong>Max</strong> number of edge disjoint paths in undirected graps: <br />
+Replace each edge with two antiparallell edges; Run Max flow.</p>
+
+<h3>Circulation with demands.</h3>
+
+<p>Max-flow formulation. <br />
+Add a node s that feeds all the nodes with negative demands(supply). <br />
+Add a node t that is fed by all the nodes with positive demands.</p>
+
+<p><strong>Integer theorem</strong> If all capacaites and demands are integers ==> An integer
+valued max-flow exists.</p>
+
+<p>Circulation with lower bounds: model lower bounds as demands.</p>
+
+<p><strong>Survey Design</strong> - Bipartite graph - max flow formulation.</p>
+
+<p><a id="LPs"></a></p>
+
+<hr />
+
+<h2>Linear Programming</h2>
+
+<p>Standard min form (primal):</p>
+
+<p>Min:  cTx <br />
+Ax >= b <br />
+x >= 0  </p>
+
+<p>Min Slack form (Slack form requires equality of the constraint):  </p>
+
+<p>Min cTx <br />
+Ax = b <br />
+x >= 0</p>
+
+<p><strong>Can convert</strong> from standard to slack form with tricks of inequalities. E.g: <br />
+a=b ==> a&lt;=b &amp;&amp; b&lt;=a</p>
+
+<p>Dual (Min): <br />
+Max bTy <br />
+ATy &lt;= c <br />
+y >= 0</p>
+
+<p>Weak Duality: x is feasible for primal, y is feasible for dual ==> cTx >= bTy</p>
+
+<p>Duality (Strong): If the primal or the dual has a feasible and bounded solution, so does the other. And their optimal solution intersects.</p>
+
+<h3>Shortest path LP</h3>
+
+<p>Minimise: <br />
+  ⎲  w(e) * x(e) <br />
+  ⎳ <br />
+edges</p>
+
+<p>St. <br />
+sum of edges leaving a node - sum of edges into a node = <br />
+1 for s
+-1 for t
+0 for all other nodes</p>
+
+<h3>Extreme Point Solutions</h3>
+
+<p>Sometimes called vertices.</p>
+
+<p>A solution is an extreme point solution if it is NOT a convex solution of two other solutions.</p>
+
+<p>A convex solution (not extreme): x = <strong>t</strong> y - (1 - t) z</p>
+
+<h3>Simplex</h3>
+
+<ol>
+<li>Start with a node in the polytope that is known to be feasible.</li>
+<li>Move from the node to a neighbouring feasible node.</li>
+<li>Stop at a local optimum.</li>
+</ol>
+
+<p>Note:Due to convexity a local optimum is also a global optimum.</p>
+
+<h3>Ellipsoid</h3>
+
+<p>Slow and numerically unstable in practice...</p>
+
+<h3>Interior Point Methods</h3>
+
+<ol>
+<li>Start inside the polytope</li>
+<li>Move around inside the polytope</li>
+<li>Find the optimum.</li>
+</ol>
+
+<p><a id="approx"></a></p>
+
+<hr />
+
+<h2>Approximation Algorithms</h2>
+
+<h3>A fistful of definitions</h3>
+
+<p>Approximation ratio p - A solution to x will be within factor p away from the
+optimal solution for x.</p>
+
+<p>For Minimisation problems:</p>
+
+<p>p = supremum A(X) / OPT(x)</p>
+
+<p>(supremum is least upper bound)</p>
+
+<p>For Maximisation problems:  Opt(X) / A(x)</p>
+
+<p>so minimum p is always 1. 👌</p>
+
+<h3>PTAS</h3>
+
+<p>Arbitrary approximation ratio. <br />
+Takes ε as an input. <br />
+Returns a solution of size: 1 + ε <br />
+Takes time polynomial in input size to problem. (May even be exponential in size 1/ε). <br />
+E.g: O(n^ 1/ε)  </p>
+
+<h3>FPTAS</h3>
+
+<p>Polynomial in size of input (n) <strong>AND</strong> in 1/ε.</p>
+
+<h3>Vertex Cover - NP Complete</h3>
+
+<p>A vertex cover is a set of vertices. Such that every edge touches at least one of the vertices in C.</p>
+
+<p>Approx Ratio 2.
+Select an EDGE, add it's endpoints to the Cover, remove it's endpoints and all adjacent edges.</p>
+
+<p>Can also use a LP based formulation and rounding of the relaxation. <br />
+This is extensible to use with costs.</p>
+
+<h3>Set cover problem</h3>
+
+<p>Set F of subsets Si ⊆ U.</p>
+
+<p><code>
+Q = Φ <br />
+Select Si ∈ F with Largest cardinality <br />
+Q = Q U Si <br />
+F = F \ Si <br />
+Remove all elements of Si from F
+</code></p>
+
+<p>Approximation ratio = Ln(|U|)</p>
+
+<p>Counterexample of size 2^n elements:  </p>
+
+<p>Two rows of n elements <br />
+Subset1 = first row <br />
+Subset2 = second row <br />
+and then a subset that takes 2^i-1 elements from each row.</p>
+
+<p>(i.e each set is of size power of 2, but half it's elems are from the top row, half from the bottom 😉 &amp; then two sets that partition it in two.)</p>
+
+<p>This is a counterexample because you should pick the two rows and then you cover the set with only two subsets. However the algorithm could equally pick the subset of size 2^n-1 that is the same size as a row but in this case spans both rows 😟</p>
+
+<p><strong>Pseudo-Tree:</strong> Like a tree but with one additional edge ≡ At most |V| edges.</p>
+
+<p><strong>Pseudo-forest:</strong>  a graph is a pseudo-forest if it is composed of connected components that are each pseudo-trees.</p>
+
+<h3>Max 3-SAT.</h3>
+
+<p>Trivial-Random algorithm has approx-ratio = <strong>8/7</strong> <br />
+Algorithm <code>Select a random truth assignment</code> <br />
+Is a 1/7 approximation algorithm. <br />
+Expected number of clauses is n*(7/8), where n is the number of clauses.</p>
+
+<h3>Derandomisation</h3>
+
+<p>Uses the <em>linearity of expectation</em>.</p>
+
+<p>X = (x1 + x2), (x2+ ¬x4), (x2+ x5), (¬x2+ x4), (x3+ ¬x5)</p>
+
+<p>N(X) = N(x1 + x2) + N(x2+ ¬x4) + N(x2+ x5) + N(¬x2+ x4) + N(x3+ ¬x5)</p>
+
+<p>Compare N(X(x1,x2,x3,x4,0)) vs N(X(x1,x2,x3,x4,1))
+Select the assignment for x5 that is higher. (Still based on random probability of other variables).</p>
+
+<p>N(X(x1,x2,x3,x4,0)) = N(x1 + x2) + N(x2+ ¬x4) + N(x2) + N(¬x2+ x4) + (1)</p>
+
+<h3>Derandomised TSP</h3>
+
+<p>There is a PTAS for Euclidean(TSP in Euclidean space) TSP.</p>
+
+<p>Approximation algorithm with 3/2.</p>
+
+<pre><code>1. Compute a MST.
+
+2. Traverse the tree to find a tour that may  
+visit nodes more than once.
+
+3. Take other routes to avoid visiting
+nodes more than once.
+
+4. The resulting tour has length &lt;= 2 . MST
+</code></pre>
+
+<p><a id="amortizedAnalysis"></a></p>
+
+<hr />
+
+<h2>Amortized Analysis</h2>
+
+<h3>Aggregate analysis.</h3>
+
+<p>Compute a tight bound on the worst case of n operations.</p>
+
+<h3>Credit Method</h3>
+
+<p>Pay for some operations.
+These prepay for other operations. <br />
+Credit is stored on the system. <br />
+Must be in credit at all times.  </p>
+
+<p>Amortised cost = amount we charge.</p>
+
+<h3>Potential Method</h3>
+
+<p>Credit method - Stores credit with objects <br />
+whereas <br />
+The potential method stores credit with the structure as a whole.</p>
+
+<p>Potential can be released to pay for later operations.</p>
+
+<p>One unit of potential pays for any constant-time operation.</p>
+
+<p>ɸ: Configurations --> R</p>
+
+<p>ĉ = Amortized cost = real cost + change in potential <br />
+Denoted with a c-hat. c with a circumflex.</p>
+
+<p>Potential always need to be positive. Initial potential can be 0.</p>
+
+<p>Table example:  </p>
+
+<p>ɸ(T) = 2 * num[T] - size(T) <br />
+      1/2*size(T) - num[T]</p>
+
+<p><a id="DisjointSets"></a></p>
+
+<hr />
+
+<h2>Disjoint Sets – Union-Find Problem</h2>
+
+<p>Operations:</p>
+
+<ul>
+<li>Union</li>
+<li>Make-set</li>
+<li>Find</li>
+</ul>
+
+<p>A set of DISJOINT sets. (Obviously).</p>
+
+<h3>MST implementation with Disjoint Forests - Disjoint Forests. I totally get you now.</h3>
+
+<pre><code>For each edge (u,v) of G,
+taken in increasing weight:
+    if Find-set(u) =/= Find-set(v):
+        A.add(u,v)
+        Union(u,v)
+Return A
+</code></pre>
+
+<h3>Array</h3>
+
+<p>Elements in range 1..n - just use an array with n elements. <br />
+Union is O(n) though.</p>
+
+<h3>Linked List.</h3>
+
+<pre><code>Node:
+    Value
+    *Next
+
+    *Head
+    *Tail
+</code></pre>
+
+<p><strong>Weighted Union:</strong> Store list length(can just store this in head/representative), append shorter list.</p>
+
+<p>m+n operations takes O(m + n lg(n) )</p>
+
+<h3>Forests - Disjoint set forests</h3>
+
+<p>Each set is a tree <br />
+Each elem points to its parent.</p>
+
+<h3>Link By Size</h3>
+
+<p>Subtree count for each node. <br />
+Make set needs to increment this.</p>
+
+<h3>Link by rank</h3>
+
+<p>Maintain a <strong>rank</strong> for each node. Initially 0.
+Link on node with smaller rank. <br />
+If ranks are equal, pick arbitrarily and then increase rank.</p>
+
+<pre><code>Nodes:
+    Value
+    Rank
+    *Parent
+</code></pre>
+
+<p>Properties:</p>
+
+<ul>
+<li><p><strong>Lemma</strong> Root of rank k has >= 2^k nodes in its tree.</p></li>
+<li><p><strong>Lemma</strong> Highest rank of a node is &lt;= log n.</p></li>
+<li><p>For any integer r there are n / 2^r nodes with that rank.</p></li>
+</ul>
+
+<h3>Path compression</h3>
+
+<p>From searching for x, Find the root of tree. <br />
+Move all nodes encountered along the way so that they are children of root.</p>
+
+<pre><code>Find(x)
+    if x.parent =/= x
+        x.parent = Find(x.parent)
+    return x.parent
+</code></pre>
+
+<h3>Log Star</h3>
+
+<p>2 ↑ n+1 = 2^ (2↑n)
+2↑0 = 1</p>
+
+<p>lg* n = max{k | 2↑k &lt;= n }</p>
+
+<p><a id="BSTs"></a></p>
+
+<hr />
+
+<h2>Binary Search Trees</h2>
+
+<pre><code>@implementation BST
+    Node Root
+    - (void) insert:(int) x
+    - (void) delete:(Node) x
+
+    - (Node) search:(Int) x
+
+    - (Node) min
+    - (Node) max
+
+    - (Node) succ:(int) x
+    - (Node) pred:(int) x
+</code></pre>
+
+<p>BST property - strict inequality, so no duplicates, it stores a <em>set</em>.</p>
+
+<p>Search - returns where the elemnt is <strong>OR</strong> should be.</p>
+
+<p><a id="RedBlackTrees"></a></p>
+
+<hr />
+
+<h2>Red Black Trees</h2>
+
+<p>Properties:</p>
+
+<ol>
+<li>Either red or Black.</li>
+<li>Each red node has two black children.</li>
+<li>Root is black</li>
+<li>For all nodes n, there exists x, all paths from n to a leaf contain exactly x black nodes.</li>
+<li>Leaves are nil and black.</li>
+</ol>
+
+<h3>Insert (x):</h3>
+
+<p>Place x in the tree where it goes in the BST. <br />
+Colour it <em>RED</em></p>
+
+<p><strong>Case (<em>RED</em> uncle):</strong> <br />
+Recolour parent, uncle, grandparent. <br />
+Recursively fix grandparent  </p>
+
+<p>{Following cases assume <strong><em>Black</em></strong> Uncle}  </p>
+
+<p><strong>Case (zig-zag / zag-zig):</strong> <br />
+Rotate node with parent.
+(Rotate to zig-zig (or zag-zag)).</p>
+
+<p><strong>Case (zig-zig / zag-zag):</strong> <br />
+Right-Rotate grandparent. <br />
+Recolour old grandparent and recolour new grandparent black. (just make sure the rules hold)</p>
+
+<p>At the end, recolour the root black.</p>
+
+<h3>Theories</h3>
+
+<p>n items means height &lt;= 2 log(n+1).</p>
+
+<p><a id="SplayTrees"></a></p>
+
+<hr />
+
+<h2>Splay Trees</h2>
+
+<p>CAN BE UNBALANCED!!!</p>
+
+<p>Amortised cost of O(log n).</p>
+
+<p>Splay(x): <br />
+Find x <br />
+"Splay" x to root with rotations.</p>
+
+<h3>Left Rotate</h3>
+
+<p><img src="leftRotate.png" alt="To the left one time" title="" /></p>
+
+<h3>Right Rotate</h3>
+
+<p><img src="rightRotate.png" alt="Slide to the right" title="" /></p>
+
+<p>Zig basically means left child.</p>
+
+<p><strong>Zig-zig operation:</strong> <br />
+{Left Child;Left Child} (from GP to child). <br />
+Right-rotate grandparent. <br />
+Right-rotate parent.  </p>
+
+<p><strong>Zig-Zag:</strong> <br />
+{Left Child;Right Child}. <br />
+Left-rotate parent <br />
+Right-rotate grandparent.  </p>
+
+<p>There is also the simple case of just a zig... <br />
+Too simple to be highlighted here 👊</p>
+
+<p><strong>Rank(x)=</strong> Log(size(x)) <br />
+With size(x) = Number of nodes in subtree of x. <br />
+{Technically size is defined in terms of weight, but the notes just give
+  all nodes a weight of 1.}</p>
+
+<h3>Search</h3>
+
+<p>After search we find either the root or its succ or its pred. <br />
+We move whatever we find to the root. <br />
+return root.  </p>
+
+<h3>Insert</h3>
+
+<p>Insert is BST insert(x) and then splay (x).</p>
+
+<h3>Delete</h3>
+
+<p>A bit more interesting.  </p>
+
+<p>Splay x to the root. <br />
+Delete the root. <br />
+Pick succ x or pred x. Splay it to the root of its subtree S1 <br />
+Add the other subtree as a child of S1.</p>
+
+<h3>Analysis</h3>
+
+<p>Weight of each node is 1.</p>
+
+<p>Size(x) = weight of its subtree.</p>
+
+<p><strong>Tree Potential</strong> = Sum of ranks of tree nodes. {Yes, all nodes}  </p>
+
+<p>ɸ(T) = <br />
+⎲  r(x) <br />
+⎳ <br />
+x in T  </p>
+
+<p>Rank(x) = log(size x)</p>
+
+<p>Perfectly balanced tree has potential θ(n).</p>
+
+<p><strong>Access Lemma:</strong> <br />
+The amortized cost of splaying a node x is at most: <br />
+1 + 3*( r'(x) - r(x) ) <br />
+{r is rank before splaying. <br />
+   r' is rank after splaying. }</p>
+
+<p><strong>Balance Theorem</strong> <br />
+In a tree with at most n items. The amortized cost of Search, Insert and Delete
+is <em>O(log n)</em>.</p>
+
+<p><strong>Colollary:</strong> In a tree with n items, m search/insert/delete operations costs
+at most O(m logn + n logn).</p>
+
+<p>Optimal Static Search Trees. <br />
+Leaves frequently accessed stuff near the root.
+Splay trees are within a constant of the optimal dynamic search tree. <br />
+Splay trees are also within a constant of the optimal static search tree.  </p>
+
+<p><a id="FFT"></a></p>
+
+<hr />
+
+<h2>Fast fourier transforms</h2>
+
+<p>Degree bound n - means degree strictly less than x^n. (So x^ n-1).</p>
+
+<p>Horner's rule - <strong>Evaluation in O(n)</strong> aritmethic operations <br />
+A(x0) = a0 + x0(a1 + x0(a2 +... + x0(an-2 + x0*an-1) ... )).</p>
+
+<p>Multiplication is O(n^2)</p>
+
+<p>Aim is to multiply faster than θ(n^2).</p>
+
+<h3>Point-value representation</h3>
+
+<p>Represent as n pairs of values, (xi, yi) on the curve. The Vandermonde matrix is
+non-singular when the x values are distinct therefore it uniquely determines a polynomial.</p>
+
+<p>Addition and <strong>multiplication</strong> over the same basis takes <strong>O(n)</strong> arithmetic
+operations.</p>
+
+<p>Better way to do it in O(n Log(n)).</p>
+
+<p>Interpolation is the conversion back into coefficient form.</p>
+
+<h3>Converting coefficient to point-value form:</h3>
+
+<p><strong>Evaluation:</strong> O(n^2) using Horner's rule. <br />
+Best done in point-value form, so we translate.
+Just evaluate the coefficient form for x at x0, x1 ,..., xn.  </p>
+
+<p><strong>Interpolation:</strong>
+Use the Vandermonde matrix. Basically we know the point-values <br />
+Vandermonde matrix has each line as a geometric progression <br />
+detV(x0, x1,..., xn-1) = Product (xk-xj) all j &lt; k &lt; n.</p>
+
+<p>So we solve Ax=b (for x, naturally). <br />
+Gaussian elimination, do this in O(n^3) arithmetic.</p>
+
+<p>Lagrange's formula to directly compute A(x) with only <strong>O(n^2)</strong>:</p>
+
+<p>A(x) = <br />
+n-1 <br />
+⎲        Product x - xj  (j=/=k) <br />
+⎳ yk *  ------------------------- <br />
+           Product(xk-xj) (j=/=k) <br />
+k=0</p>
+
+<p>There are n nth-roots of unity. 👌</p>
+
+<h3>DTF 🍆 - Discrete Fourier transforms</h3>
+
+<p>Transformation from coefficient ==> point-value where we use roots of unity as
+our xi values.</p>
+
+<p>ω is one root of unity.</p>
+
+<p>Define ω = ωn = exp(2πi/n) <br />
+DFTn(A) = (A(1), A(ω), ..., A(ω^ n-1) )
+So we're evaluating at the unity points. <br />
+§
+FFT is an Algorithm to compute the DFT.</p>
+
+<h3>Divide and conquer:</h3>
+
+<p>A(X) = B(x^2) + x.C(x^2)
+B and C degree n/2 bound.</p>
+
+<p>So to compute DFTn(A) we can just calculate DFTn/2(B) and DFTn/2(C).</p>
+
+<p>Takes O(n log(n)) work.</p>
+
+<p>Algorithm in pseduo code</p>
+
+<pre><code>FFT(a[0.. n-1])
+    If n=1
+       then return a
+    wn:= e^2pi*i/n
+x := 1
+    Array B := FFT(a[0, 2, ... , n-2])
+Array C := FFT(a[1, 3, ... , n-1])
+
+Array y
+for(k=0; k&lt;n/2; k++)
+   y[k]    := B[k] +x *C[k]
+   y[k+n/2]:= B[k] -x *C[k]
+   x := x* wn
+return y
+</code></pre>
+
+<p>This is recursive and does evaluation in O(n log(n)).</p>
+
+<h3>Evaluation equivalent to interpolation ???</h3>
+
+<p>DFTn(a) = (Y0, ..., Yn-1)
+Yk = A(wk) = Sum (j=0,n-1) aj w^kj</p>
+
+<p>The DFT is <em>JUST</em> a matrix-vector product. <br />
+Writing a and y = DFTn(a) as column vectors, we have: <br />
+y=Va, V is the vandermonde matrix found by th DFT.  </p>
+
+<p>a = y V^-1</p>
+
+<p>V-prime is obtained by replacing each entry w^k with w^-k in V.</p>
+
+<p>V<em>V-prime = n</em>I.</p>
+
+<p>V is non-singular and V^-1 = 1/n * V-prime.</p>
+
+<p><a id="RSA"></a></p>
+
+<hr />
+
+<h2>Number Theoretic Algorithms</h2>
+
+<p>m, n are B bit numbers.</p>
+
+<p>m + n: O(B) <br />
+m * n: O(B^2) <br />
+m mod n: O(B^2)</p>
+
+<h3>Euclids algorithm</h3>
+
+<p>n = qm + r <br />
+p|n and p|m iff p|m and p|r <br />
+{n, m}, {n, r} have same set of common divisors.  </p>
+
+<pre><code>Euclid(a,b)
+    if b=0
+   then return a
+else return Euclid(b, a mod b)
+</code></pre>
+
+<p>Euclid(a,b) = gcd ( a , b )</p>
+
+<p>Runs in O(B^3) where A,B are of size B bits.</p>
+
+<h3>Extended euclid</h3>
+
+<p>returns d, x, y <br />
+st gcd(a,b) = d =ax + by.</p>
+
+<p>ExEuclid(a,b)
+   if b=0
+      then return (a, 1, 0)
+   else
+      (d', x', y') = ExEuclid(a,b)
+      (d, x, y)    = (d', y' , x' - (a div b)y' )
+      return (d, x, y)</p>
+
+<h3>Euclid inverses</h3>
+
+<h3>Lemma gcd</h3>
+
+<p>For a,b Natural numbers or 0. <br />
+there exist <em>integers</em> x,y st</p>
+
+<p>gcd(a,b) = ax + by</p>
+
+<h3>Chinese Remainder Theorem</h3>
+
+<p>if n=n1*n2...nt where all ni are pairwise independent <br />
+All equations: x = ai (mod n)  (i in 1..t) have a unique solution.</p>
+
+<h3>Fast exponentation</h3>
+
+<p>We get a fast algorithm for exponentiation.</p>
+
+<pre><code> d=1
+ while(k&gt;0)
+  if k.odd
+      d = d.a mod n
+      k--
+  if k&gt;0
+      a = a*a mod n
+      k = k / 2
+ return d
+</code></pre>
+
+<p>O(B^3) for a,k,n B bit numbers.</p>
+
+<h3>Quick Groups</h3>
+
+<p>Group = <G,.> - a set and an operation.</p>
+
+<ol>
+<li>For all a,b in G a.b in G.</li>
+<li>Associativity of (a.b).c...  </li>
+<li>e in G, st a.e=a for all a.</li>
+<li>for all a we have -a, st a.-a = e</li>
+</ol>
+
+<p>To check <G',.> is a group {for a subset G' of G}.</p>
+
+<p>Just check G' is closed under .</p>
+
+<h3>Groups - Zn</h3>
+
+<p>Zn = &lt;{0,..., n-1}, + } can have operator + or *.</p>
+
+<p>Zn* = { a in Zn | gcd(a,n) = 1}  |Zn*|= Phi n <br />
+Multiplicative group mod n.</p>
+
+<p><strong>Lagranges theorem:</strong> S a subset of Zn* then it is non-empty and closed. under multiplication |S| divides |Zn*|.</p>
+</div></body></html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<meta charset = UTF-8> 
+<link rel="stylesheet" type="text/css" href="../REDTIME.css"> 
+<link rel="shortcut icon" href="../favicon.ico"> 
+<title> Complexity </title> 
+</head><body><div id="divback"></div><div id="main"><h3><a href="../index.html"> &larr; Home </a></h3>
+<h1>Complexity</h1>
+
+<h2>Contents</h2>
+
+<ul>
+<li><a href="#rice">Rice's theorem</a></li>
+<li><a href="#TM">Turing Machines</a></li>
+<li><a href="#Halting">The Halting Problem</a></li>
+<li><a href="#P">PTime</a></li>
+<li><a href="#NP">Nondeterministic Polynomial Time</a></li>
+<li><a href="#reductions">Reductions</a></li>
+<li><a href="#approx">Approximation</a></li>
+<li><a href="#space">Space</a></li>
+<li><a href="#LogSpace"">Log Space</a></li>
+</ul>
+
+<p><a id="rice"> </a></p>
+
+<hr />
+
+<h2>Rice's Theorem</h2>
+
+<p>P a subset of the set of all languages.</p>
+
+<p>P is not the set of all languages. <br />
+P is not the empty set.  </p>
+
+<p>Then</p>
+
+<p>P is undecidable.</p>
+
+<p><a id="TM"> </a></p>
+
+<hr />
+
+<h2>Turing Machines</h2>
+
+<p>Configuration - {Q-state, (w1, ..., wn) -word on tape i, (p1, ..., pn) position of head on tape i.}.</p>
+
+<p>T_M(w) is the number of steps for the machine M to halt on input w.</p>
+
+<p>Decision problem - output is in {"Yes", "No"}</p>
+
+<p>Turing acceptor - F - Two sets of final states Fa and Fr.</p>
+
+<h3>There exist undecidable languages.</h3>
+
+<ol>
+<li><p>Words in Sigma* are countably infinite, can just use lexicographical ordering. <br />
+Therefore we create an enumeration, p, of words in sigma* <br />
+Each language can now be represented as an infinite string, x, where x[i] = 1 iff p(i) is in the language. <br />
+Therefore we represent languages as infinite strings.</p></li>
+<li><p>Infinite strings over {0,1} are uncountably infinite.
+We assume they are countable. such that f(i) is the ith infinite string in our ordering.
+Then we construct a string c which differs from f(i) in the ith position.
+Contradiction as now c does not occur anywhere in our enumeration.</p></li>
+<li><p>Turing machines are countable as they can be expressed as finite strings in terms of an encoding on their state space, tape contents, language, transition funciton, initial state(just list as the first state when we encode the set of states), and their final states.</p></li>
+<li><p>Languages are infinite strings, inifinite strings are uncountable. TMs are countable. Therefore we can't map all languages to TMs and there are some languages for which no Turing Machine exists, therefore these languages without TMs are undecidable.</p></li>
+</ol>
+
+<p><a id="Halting"> </a></p>
+
+<hr />
+
+<h2>Halting Problem</h2>
+
+<p>Assume H(M, w) tells us if M halts on w.</p>
+
+<p>Construct S(&lt; M >) = opposite of H(M, &lt; M >). I.e accepts iff H rejects</p>
+
+<p>Run S(&lt; S >) this accepts iff H(S, &lt; S >) rejects.
+i.e S halts and accepts on &lt; S > iff H tells us S does not halt or accept on &lt; S >.</p>
+
+<p><a id="P"> </a></p>
+
+<hr />
+
+<h2>PTime</h2>
+
+<p>Ptime = U Dtime(n^d) for all d. <br />
+Ptime = class of languages with a n^d-time-bounded k-tape Turing-acceptor. For some k>=1. We may say k=1 by the tape-reduction theorem.</p>
+
+<p>PTime Algorithm that decides 2-Sat:</p>
+
+<pre><code>Main(T):
+    if (BCP(T) == Conflict) return unsat
+    While(T =/= Empty)
+        Choose var X from T
+        SaveT := T
+        Assign(T,X,1)
+        if (BCP(T) == Conflict)
+            T := SaveT
+            Assign(T,X,0)
+            if(BCP(T)==Conflict) return unsat.
+    return Sat
+
+
+BCP(X):
+    While(X contains a unit clause, C)
+        if (C = {x}) Assign(X, x, 1)
+        else Assign(X, x, 0)     //c = {-x}
+    if(X contains empty clause {}) return Conflict
+    return NoConflict
+
+Assign(T, x, i):
+    if(i==1){
+        Remove all clauses containing x.
+        Remove x from all clauses containing -x.
+    }
+    else{
+        Remove all clauses containing -x.
+        Remove x from all clauses containing x.
+    }
+</code></pre>
+
+<h3>2-col &lt;= p 2-sat.</h3>
+
+<p>Reduction of 2-colorability to 2-sat!!!</p>
+
+<p>Construct 2-sat formula X. <br />
+For each edge (u, v) in our 2-col graph add clauses {xu, xv}, {-xu, -xv} to X.</p>
+
+<p>Pseudo Ptime - PTime in the maximum of input length and <em>value</em> of numbers input.</p>
+
+<p><a id="NP"> </a></p>
+
+<hr />
+
+<h2>NP - NonDet PTime</h2>
+
+<p>Transition function is non-det.</p>
+
+<p>Has a polynomial Time verifier. Certificates for a problem are polynomially bounded in the length of the input problem.</p>
+
+<p><a id="reductions"> </a></p>
+
+<hr />
+
+<h2>The Reductions</h2>
+
+<h3>SAT</h3>
+
+<p>Cook levin.</p>
+
+<h3>Clique (Use SAT)</h3>
+
+<p>Take clauses Cj and each literal Li within that clause. Add a node V<em>jL</em>. <br />
+Connect  V<em>jL</em> and V<em>j'L'</em> iff j =/= j' and the literals, L and L' are not incompatible.
+(Incompatible if L=X and L'=NOT X )</p>
+
+<p>Extra notes:
+X in Sat with k clauses. Clique of size k.  </p>
+
+<h3>Independent Set (Use Clique)</h3>
+
+<p>Take a graph, invert the edges.</p>
+
+<h3>Vertex Cover (Use Clique)</h3>
+
+<p>G has a clique X of size k. <br />
+Y = V \ X is a VC in G complement..  </p>
+
+<p>===> <br />
+e= (u,v) at most one of u,v can be in X, as if they were both in the clique,
+their edge would no longer be in G complement.</p>
+
+<p>Hence at least one of u,v in Y.</p>
+
+<p>&lt;==== <br />
+V \ X is a VC. u,v in X. <br />
+Assume an edge (u, v), but then not covered in Y. Contra. <br />
+Therefore, no edge (u,v) in G complemet. <br />
+Therefore an edge in G. And so X is a clique.</p>
+
+<h3>3-SAT (use SAT).</h3>
+
+<p>Reduction from SAT.</p>
+
+<p>C = (L1, ..., Lk) in Sat with more than 3 clauses. <br />
+Add variables Yi. Replace C' with 3CNF clauses:
+C' = (L1, Y1), (-Y1, L2, Y2 ), ..., (-Yk-1, Lk)</p>
+
+<h3>Directed Hamiltonian Path is NP-Complete.</h3>
+
+<p>Reduction from 3-SAT
+X = C1 in 3CNF.</p>
+
+<h3>SubsetSum is NP-Complete</h3>
+
+<p>Reduction from SAT.  </p>
+
+<p>X in CNF = C1 and C2 and C3... Ck.</p>
+
+<h3>Knapsack (use SubsetSum)</h3>
+
+<h3>Reachability</h3>
+
+<p>Reachability is in PTime, can use Floyd-Washall to do it in O(|V|^3)
+Also NLogSpace complete.</p>
+
+<p><a id="space"> </a></p>
+
+<hr />
+
+<h2>Space - The final frontier</h2>
+
+<p>TM with a read-only input tape.</p>
+
+<p>DTime(f) subset&lt; of DSpace(f)</p>
+
+<p>Sat is in linear space - just try every assignment in turn. <br />
+NP subset of PSpace.</p>
+
+<p>QBF- NPSpace hard <br />
+Also in PSpaceTherefore PSpace=NPSpace.</p>
+
+<p>Savitchs' Theorem: For all S >= log(n) <br />
+NSpace(S(n)) &lt;= DSpace(S(n)^2).  </p>
+
+<p>PSpace = NPSpace.</p>
+
+<p><a id="LogSpace"> </a></p>
+
+<hr />
+
+<h2>Log Space</h2>
+
+<p>Logspace = U (dlog(n)) {for all integers d.}</p>
+
+<p>Logspace transducer - A TM.</p>
+
+<ol>
+<li>With a read-only input tape</li>
+<li>Read/write tape</li>
+<li>A write-only write-once output tape.</li>
+</ol>
+
+<p>Computes a function f, using less than or equal to log(|w|) space on its working tape. <br />
+When it terminates the result f(w) is on the output tape.</p>
+
+<p><a id="approx"> </a></p>
+
+<hr />
+
+<h2>Approximation</h2>
+
+<h3>Optimisation problems - 4 points</h3>
+
+<ol>
+<li>Inst - set of problem instances</li>
+<li>Sol(x):  Inst --> Sol - a mapping of a given instance to a set of
+<em>feasible</em> solutions</li>
+<li>Cost:Inst(x) x Sol(x) ---> R  -  gives the cost of a given solution.</li>
+<li>Opt ∈ {min, max}</li>
+</ol>
+
+<h3>NPO</h3>
+
+<ol>
+<li>Inst is decidable in PTime.</li>
+<li>Given x ∈ Inst, y ∈ Σ* <strong>y ∈ Sol(x)</strong> is decidable in PTime.</li>
+<li>Cost is in PTime.</li>
+<li>For all x, Sol(x) is bounded in length polynomial wrt to x.</li>
+</ol>
+
+<h3>APX</h3>
+
+<p>Set of problems in NPO with fixed-constant approximation algorithms.
+(Can be approximated in constant factor)</p>
+
+<h3>PO</h3>
+
+<p>Problems that can be solved in <strong>P</strong>Time, <strong>O</strong>ptimally.</p>
+
+<h3>Min Vertex Cover.</h3>
+
+<pre><code>Repeat until no edges left
+    Pick an edge (u,v)
+    Add u and v to R.
+    Remove all edges incident on u and v.
+
+return R.
+</code></pre>
+
+<p>An optimal solution must contain at least one of the endpoints for all the edges we selected. We selected both endpoints. Therefore our solution is at most twice as big as the optimum.</p>
+
+<h3>TSP <strong>NOT</strong> in APX</h3>
+
+<p>Hamiltonian circuit is NP-complete.
+Hamiltonian circuit takes <G,k> is a closed loop through a graph that visits each node exactly once.</p>
+
+<p>TSP is finding a Hamiltonian cycle of least weight. Where the input graph is complete.</p>
+
+<p>If TSP was in APX then for any input graph G we could work out the minimum hamiltonian path with ratio r.</p>
+
+<p>For any input we create G' where we assign unitary weights for vertices connected by an edge and apply weight (1+r)|V| for edges that were not in V(G)</p>
+
+<p>G has a Hamiltonian circuit ===> T has a tour of length |V|.</p>
+
+<p>Otherwise minimal tour is at least (1+r)|V| as it has to use a non-graph edge.</p>
+
+<p>So we run our APX algorithm on G', if it gives &lt;=r|V| then has a Hamiltonian cycle.</p>
+</div></body></html>

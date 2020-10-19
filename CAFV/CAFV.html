@@ -1,0 +1,150 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<meta charset = UTF-8> 
+<link rel="stylesheet" type="text/css" href="../REDTIME.css"> 
+<link rel="shortcut icon" href="../favicon.ico"> 
+<title> CAFV </title> 
+</head><body><div id="divback"></div><div id="main"><h3><a href="../index.html"> &larr; Home </a></h3>
+<h1>Computer Aided Formal Verification</h1>
+
+<hr />
+
+<h2>Contents</h2>
+
+<ul>
+<li><a href="#ROBDD">Reduced Order Binary Decision Diagrams</a></li>
+<li><a href="#LTL">Linear Temporal Logic</a></li>
+<li><a href="#CTLStar">CTL*</a></li>
+<li><a href="#GNBA">GNBA</a></li>
+<li><a href="#CTL">Semantics of CTL</a></li>
+</ul>
+
+<hr />
+
+<p>Bring the formalism. Formality is key 👔🔑  </p>
+
+<p>It's in the name, this is <strong>formal</strong> verification, not computer-aided
+casual-maybe-on-the-weekend verification.</p>
+
+<p><a id="TS"></a></p>
+
+<hr />
+
+<h2>Transition System</h2>
+
+<p>Transition System is a 5 tuple: &lt; S, ==>, I, AP, L >. <br />
+Only consider non-blocking TS's.</p>
+
+<p>Deterministic iff |I| = 1 And ∀s.|Post(s)| = 1</p>
+
+<p>Initial-Path-Fragment - starts state in I.</p>
+
+<p><a id="LTL"></a></p>
+
+<hr />
+
+<h2>Linear Temporal Logic</h2>
+
+<p>Traces are in (2^AP^ω)</p>
+
+<p>TS implies P means:  traces(TS) ⊆ traces(P)</p>
+
+<p>TS is a refinemet of TS' if traces(TS) ⊆ traces(TS')</p>
+
+<p>traces(TS) ⊆ traces(TS')  &lt;====> TS' impies P  ===> TS impies P</p>
+
+<h3>Invariants</h3>
+
+<p>P is an invariant if it has an invariant condition ɸ st:</p>
+
+<p>P = {A0A1A2...∈ 2^AP^ω | ∀j>=0 Aj implies ɸ}</p>
+
+<p>There is some invariant condition such that P can be expressed as a list of
+infinite words where each state implies the invariant.</p>
+
+<h3>Safety Properties</h3>
+
+<p>Nothing bad happens.</p>
+
+<p>∀s ∈ (2^AP^ω) \ P, ∃s'&lt; s st</p>
+
+<p>P ∩ {t ∈ (2^AP^ω) | t &lt; s' } = ɸ</p>
+
+<p>There exists a finite prefixes of bad words</p>
+
+<p><a id="CTLStar"></a></p>
+
+<hr />
+
+<h2>CTL*</h2>
+
+<p>LTL is all path formulae - All <strong>PATHS</strong> from the given state.  </p>
+
+<p>CTL is all state formulae- For the given state we examine either: <br />
+all it's paths, <br />
+a single path, <br />
+what properties hold now, <br />
+etc etc.</p>
+
+<p>Sat(∃(A U B)) = Smallest T ⊆ S:  </p>
+
+<ul>
+<li>Sat(B) ⊆ T</li>
+<li>s ∈ Sat(A) and Post(s) intersects T ===THEN===> s ∈ T</li>
+</ul>
+
+<p>Sat(∀(A U B)) = Smallest T ⊆ S:  </p>
+
+<ul>
+<li>Sat(B) ⊆ T</li>
+<li>s ∈ Sat(A) and Post(s) ⊆ T ===THEN===> s ∈ T</li>
+</ul>
+
+<p><a id="GNBA"></a></p>
+
+<hr />
+
+<h2>GNBA</h2>
+
+<p>(Q, Sigma, delta, Q0, F) - 5 tuple</p>
+
+<p>d: Q x Sigma ---> 2^Q  </p>
+
+<p>Input to a GNBA is an infinite word. <br />
+Accepts if all f in F come up infinitely often in the infinite word.</p>
+
+<p>If F is the empty set, all states are considered accepting, so the language of G
+is all words with an infinite run in G.</p>
+
+<hr />
+
+<h2>Witnesses and Counterexamples</h2>
+
+<p>A witness for a "∃" is a sufficiently long prefix of a path pi st pi impies what
+we are seeking to find exists... #deep.</p>
+
+<p><a id="ROBDD"></a></p>
+
+<hr />
+
+<h2>Reduced Order Binary Decision Diagrams</h2>
+
+<p>A tree</p>
+
+<p>Two leaves 0 and 1.</p>
+
+<p>one type of internal node: x -> t1, t0 <br />
+t1 and t0 successor nodes or one of the two leaves.</p>
+
+<p>Reduced - No two distinct nodes have the same variable, high and low successors.</p>
+
+<p>Ordered - There exists a variable ordering such that any path through the tree
+follows this given variable order.</p>
+
+<p>Canonicity lemma - For all boolean expressions t there is some ROBDD.</p>
+
+<p>NP-Hard if a given variable ordering is optimal.</p>
+
+<p>Encoding of jazz.  </p>
+</div></body></html>
