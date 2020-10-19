@@ -1,7 +1,14 @@
 # UniExamNotes
 Revision notes from uni finals
 
-Basically just an HTML template, and notes are within their own markdown files within a folder of the same name. 
+
+## index.html
+
+The main page is just HTML in a file called `index.html` pointing at CSS in a file called `BLUETIME.css`
+
+## Sub pages
+The rest of the site is generated from the [markdown](https://daringfireball.net/projects/markdown/syntax) files. 
+Notes are stored within their own markdown files within a folder of the same name. 
 
 e.g for Advanced Data Structures & Algorithms (ADSA): `ADSA/ADSA.md`
 
