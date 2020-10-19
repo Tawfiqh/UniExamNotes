@@ -28,7 +28,7 @@ Each HTML file then has `makeHTML.sh` called on it.
 ## makeHTML.sh
 
 Pretty simple script, takes the input HTML file, uses `sed` to append a head (pretty horrible, should just use `cat`). 
-This head points to the CSS `REDTIME.css`. There's also an alternative `BLUTIME.css` that can be subbed in.
+This head points to the CSS `REDTIME.css`.  
 
 ## CSS
 The HTML is pretty bare bones. All styling happens in the CSS.
@@ -39,7 +39,7 @@ The only interesting CSS part is
 background-blend-mode: hard-light;
 ```
 
-Played around with a bunch of different [blend-modes](https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode) but is generally an easy way to get good-contrast or interesting effects on pictures. 
+Played around with a bunch of different [blend-modes](https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode) generally an easy way to get good-contrast or interesting picture effects with minimal code.
 
 
 
