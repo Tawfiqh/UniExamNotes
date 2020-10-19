@@ -21,7 +21,7 @@ This just calls `makePage.sh` for each of the folders.
 ## makePage.sh  
 This just calls [Gruber's](https://daringfireball.net/projects/markdown/) markdown script (included) on each Markdown input, converting it into an HTML document with the same name and in the same location.  
 
-Each file then has `makeHTML.sh` called on it. 
+Each HTML file then has `makeHTML.sh` called on it. 
 
 
 
